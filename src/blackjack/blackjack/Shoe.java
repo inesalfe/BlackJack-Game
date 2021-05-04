@@ -5,7 +5,8 @@ import java.util.*;
 public class Shoe {
 	
 	private ArrayList<Card> shoe;
-	private int nDecks; // Ver se vale a pena manter esta variável
+	private int nDecks; 
+	// Ver se vale a pena manter esta variável
 	private int nDealtCards;
 	
 	public Shoe(int nDecks_in) {
@@ -25,10 +26,12 @@ public class Shoe {
 	}
 	
 	public Card getCard() {
+		return null;
 		
 	}
 	
 	public int getNDealtCards() {
+		return nDealtCards;
 		
 	}
 	
