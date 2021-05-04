@@ -9,13 +9,13 @@ public class Dealer {
 	private boolean isBlackjack;
 	
 	public Dealer() {
-		shoe = new Shoe();
-		shoe = new Hand();
+		shoe = new Shoe(4);
+		hand = new Hand();
 	}
 
 	public Dealer(String shoeFile_in) {
 		shoe = new Shoe(shoeFile_in);
-		shoe = new Hand();
+		hand = new Hand();
 		
 	}
 	

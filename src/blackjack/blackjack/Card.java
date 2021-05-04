@@ -12,18 +12,22 @@ public class Card {
 	}
 	
 	public char getValue() {
+		return suit;
 		
 	}
 	
 	public char getSuit() {
+		return suit;
 		
 	}
 	
 	public int getIntValue() {
+		return intValue;
 		
 	}
 	
 	public boolean getIsUp() {
+		return isUp;
 		
 	}
 	
