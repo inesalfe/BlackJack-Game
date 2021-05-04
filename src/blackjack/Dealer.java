@@ -8,8 +8,8 @@ public class Dealer {
 	private boolean isStanding;
 	private boolean isBlackjack;
 	
-	public Dealer() {
-		shoe = new Shoe(4);
+	public Dealer(int nDecks_in) {
+		shoe = new Shoe(nDecks_in);
 		hand = new Hand();
 	}
 
