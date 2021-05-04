@@ -1,0 +1,58 @@
+# java -jar blackjack.jar -i 5 50 500 8 60
+shuffling the shoe...
+
+# b
+player is betting 5
+
+# d
+dealer's hand 2S X
+player's hand 3D 4C (7)
+
+# h
+player hits
+player's hand 3D 4C 9S (16)
+
+# h
+player hits
+player's hand 3D 4C 9S 4H (20)
+
+# s
+player stands
+dealer's hand 2S 5H (7)
+dealer hits
+dealer's hand 2S 5H 7D (14)
+dealer hits
+dealer's hand 2S 5H 7D 4D (18)
+dealer stands
+player wins and his current balance is 505
+
+# $
+player current balance is 505
+
+# b 10
+player is betting 10
+
+# d
+dealer's hand QS X
+player's hand JD AC (21)
+
+# s
+player stands
+dealer's hand QS AH (21)
+dealer stands
+blackjack!!
+player pushes and his current balance is 505
+
+# b 5
+player is betting 5
+
+# d
+dealer's hand 10S X
+player's hand 2D 10C (12)
+
+# h
+player hits
+player's hand 2D 10C 10H (22)
+player busts
+dealer's hand 10S 2H
+player loses and his current balance is 500

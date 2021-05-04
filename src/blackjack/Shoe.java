@@ -1,5 +1,7 @@
 package blackjack;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Shoe {
@@ -9,29 +11,70 @@ public class Shoe {
 	private int nDealtCards;
 	
 	public Shoe(int nDecks_in) {
-		
+		nDecks = nDecks_in;
+		nDealtCards = 0;
+		shoe = new ArrayList<Card>();
+		for (int j = 0; j < nDecks; j++) {
+			Deck deck = new Deck();
+			shoe.addAll(deck.getDeck());
+		}
 	}
 	
 	public Shoe(String shoeFile_in) {
-		
+		nDealtCards = 0;
+		shoe = new ArrayList<Card>();
+		ArrayList<String> cards = new ArrayList<String>();		
+		Scanner scanner;
+		try {
+			scanner = new Scanner(new File(shoeFile_in));
+			String line = new String();
+			while (scanner.hasNextLine()) {
+				line = scanner.nextLine();
+				cards.addAll(Arrays.asList(line.split(" ")));
+			}
+			scanner.close();
+			char suit;
+			String value;
+			String temp;
+			for(int i = 0; i < cards.size(); i++) {
+				temp = cards.get(i);
+				suit = temp.charAt(temp.length()-1);
+				value = temp.substring(0, temp.length()-1);
+				shoe.add(new Card(value, suit));
+			}			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void shuffle() {
-		
+		Collections.shuffle(shoe);
 	}
-	
-	public void addCard() {
-		
-	}
-	
+
 	public Card getCard() {
-		return null;
-		
+		Card card = shoe.get(0);
+		shoe.add(card);
+		shoe.remove(0);
+		return card;
 	}
 	
 	public int getNDealtCards() {
 		return nDealtCards;
-		
 	}
 	
+	@Override
+	public String toString() {
+		String out = new String();
+		for (int i = 0; i < shoe.size(); i++) {
+			out += shoe.get(i).toString();
+			out += '\n';
+		}
+		return out;
+	}
+
+	public static void main(String args[]){
+		Shoe shoe1 = new Shoe("shoe-file.txt");
+		System.out.println(shoe1.toString());
+	}	
+
 }

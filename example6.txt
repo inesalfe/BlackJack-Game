@@ -1,0 +1,41 @@
+# java -jar blackjack.jar -i 5 50 500 8 60
+shuffling the shoe...
+
+# 2
+2: illegal command
+
+# b
+player is betting 5
+
+# d
+dealer's hand 2S X
+player's hand 3S 4S (7)
+
+# 2
+2: illegal command
+
+# q
+bye
+
+# java -jar blackjack.jar -i 5 50 500 8 60
+shuffling the shoe...
+
+# b
+player is betting 5
+
+# d
+dealer's hand 2S X
+player's hand 4S 5S (9)
+
+# 2
+player's hand 4S 5S AC (20)
+dealer's hand 2S 5H (7)
+dealer hits
+dealer's hand 2S 5H 7D (14)
+dealer hits
+dealer's hand 2S 5H 7D 4D (18)
+dealer stands
+player wins and his current balance is 510
+
+# q
+bye

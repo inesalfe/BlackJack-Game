@@ -1,0 +1,21 @@
+# java -jar blackjack.jar -i 5 50 500 8 60
+shuffling the shoe...
+
+# b 5
+player is betting 5
+
+# d
+dealer's hand AS X
+player's hand JS 6S (16)
+
+# i
+player is insuring
+
+# s
+player stands
+dealer's hand AS KC
+blackjack!!
+player's current balance is 500
+
+# q
+bye

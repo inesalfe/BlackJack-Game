@@ -3,7 +3,7 @@ package blackjack;
 public class Dealer {
 	
 	private Shoe shoe;
-	private Hand hand;
+	Hand hand;
 	
 	private boolean isStanding;
 	private boolean isBlackjack;
@@ -11,12 +11,13 @@ public class Dealer {
 	public Dealer(int nDecks_in) {
 		shoe = new Shoe(nDecks_in);
 		hand = new Hand();
+		isStanding = false;
+		isBlackjack = hand.checkBlackjack();
 	}
 
 	public Dealer(String shoeFile_in) {
 		shoe = new Shoe(shoeFile_in);
 		hand = new Hand();
-		
 	}
 	
 	public void hit() {

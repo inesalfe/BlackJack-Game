@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Player {
 	
-	private ArrayList<PlayerHand> hands;
+	ArrayList<PlayerHand> hands;
 	
 	private int balance;
 	private int bet; // review: Is it really needed?
@@ -21,6 +21,7 @@ public class Player {
 		isBust = false;
 		isStanding = false;
 		isSurrender = false;
+		isBlackjack = false;
 		hands = new ArrayList<PlayerHand>();
 		hands.add(new PlayerHand(bet, true, false));
 	}

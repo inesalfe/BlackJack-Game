@@ -1,0 +1,16 @@
+# java -jar blackjack.jar -i 5 50 500 8 60
+shuffling the shoe...
+
+# ad
+ace-five	bet 5
+
+# b
+player is betting 5
+
+# d
+dealer's hand 2S X
+player's hand 3S 4S (7)
+
+# ad
+basic		hit	
+hi-lo		hit
