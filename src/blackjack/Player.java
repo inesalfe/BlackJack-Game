@@ -54,8 +54,6 @@ public class Player {
 		hands.add(i+2, new PlayerHand(bet, false, true));
 		hands.get(i+2).addCard(hands.get(i).cards.get(1));
 		hands.remove(i);
-		printPlayersHand(i);
-		printPlayersHand(i+1);
 	}
 	
 	public void doubleD(int i) {

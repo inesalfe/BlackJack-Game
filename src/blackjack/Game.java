@@ -219,8 +219,6 @@ public class Game {
 						System.out.println("player is splitting");
 						player.addCard(i, dealer.dealCards());
 						player.addCard(i+1, dealer.dealCards());
-						player.printPlayersHand(i);
-						player.printPlayersHand(i+1);
 						i--;
 						break;
 					}
