@@ -38,6 +38,12 @@ public class PlayerHand extends Hand {
 	}
 	
 	public boolean isSurrender() {
+		
+		/* Conditions to Surrender
+		 * 
+		 * 
+		 * */
+		
 		return isSurrender;
 	}
 	

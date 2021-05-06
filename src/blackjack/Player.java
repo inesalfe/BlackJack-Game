@@ -42,16 +42,20 @@ public class Player {
 		hands.get(i).setIsSurrender(true);
 	}
 	
-	public boolean getIsStanding(int i) {
-		return hands.get(i).isStanding();
-	}
+//	public boolean getIsStanding(int i) {
+//		return hands.get(i).isStanding();
+//	}
 	
 	public void split(int i) {
 		nHands++;
 		balance -= bet;
-		hands.add(new PlayerHand(bet, false, true));
-		hands.add(new PlayerHand(bet, false, true));
+		hands.add(i+1, new PlayerHand(bet, false, true));
+		hands.get(i+1).addCard(hands.get(i).cards.get(0));
+		hands.add(i+2, new PlayerHand(bet, false, true));
+		hands.get(i+2).addCard(hands.get(i).cards.get(1));
 		hands.remove(i);
+		printPlayersHand(i);
+		printPlayersHand(i+1);
 	}
 	
 	public void doubleD(int i) {
@@ -75,9 +79,9 @@ public class Player {
 //		return hands.get(i).getValue();
 //	}
 
-	public boolean hasBlackjack(int i) {
-		return hands.get(i).checkBlackjack();
-	}
+//	public boolean hasBlackjack(int i) {
+//		return hands.get(i).checkBlackjack();
+//	}
 
 //	public void resetHands(int newBet) {
 //		bet = newBet;

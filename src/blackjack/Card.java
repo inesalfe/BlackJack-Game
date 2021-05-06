@@ -14,13 +14,10 @@ public class Card {
 		
 		// Variable that determines selection of the suit
 		int suit_sel = n/13 + 1;
-		/*
-			- suit_sel = 1 -> Spades
-			- suit_sel = 2 -> Hearts
-			- suit_sel = 3 -> Clubs
-			- suit_sel = 4 -> Diamonds
-		*/
 		
+		//	- suit_sel = 1 -> Spades / suit_sel = 2 -> Hearts
+		//	- suit_sel = 3 -> Clubs  / suit_sel = 4 -> Diamonds
+				
 		// Variable that determines the value of each card
 		intValue = n%13 + 1;
 		if (intValue > 10) {
@@ -36,6 +33,7 @@ public class Card {
 		
 			intValue = 10;
 		}
+		
 		else
 			value = Integer.toString(intValue);
 		
@@ -123,7 +121,6 @@ public class Card {
 			return true;
 		return false;
 	}
-
 
 	@Override
 	public String toString() {

@@ -156,45 +156,84 @@ public class Game {
 		// Ciclo para cada player...
 		Scanner scanner = new Scanner(System.in);
 		String line;
+		String hand_index;
+		int print_index;
 		for(int i = 0; i < player.getNHands(); ++i) {
-			if(player.getNHands() > 1)
-				System.out.println("Playing hand [" + i + "]");
+			if(player.getNHands() > 1) {
+				print_index = i;
+				hand_index =  " [" + (i+1) + "] ";
+				if (i == 0)
+					System.out.println("playing 1st hand...");
+				else if (i == 1)
+					System.out.println("playing 2nd hand...");
+				else if (i == 2)
+					System.out.println("playing 3rd hand...");
+				else
+					System.out.println("playing 4th hand...");
+				player.printPlayersHand(print_index);
+			}
+			else {
+				print_index = -1;
+				hand_index = "";
+			}
 			while(true) {
 				line = scanner.nextLine();
 				char cmd = getCommand(line);
 				// get command from console or file
-				// se o número de cartas for 3 e double down true, não pode fazer hit
-				// se foe split de áses não se pode ter mais do q duas cartas
 				if(cmd == 'h') {
-					player.hit(i);
-					player.addCard(i, dealer.dealCards());
-					player.printPlayersHand(i);
-					if(player.hands.get(i).isBust()) {
-						System.out.println("Busted!");
-						break;
+					if (player.hands.get(i).isBust() || player.hands.get(i).isStanding() || player.hands.get(i).isSurrender() || (player.hands.get(i).isDouble() && (player.hands.get(i).getNCards() >= 3)) || (player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() >= 2) && (player.hands.get(i).cards.get(0).getValue().equals("A"))))
+						System.out.println(line + ": illegal command");
+					else {
+						System.out.println("player hits");
+						player.hit(i);
+						player.addCard(i, dealer.dealCards());
+						player.printPlayersHand(print_index);
+						if(player.hands.get(i).isBust()) {
+							System.out.println("player busts" + hand_index);
+							break;
+						}						
 					}
 				} else if(cmd == 's') {
 					player.stand(i);
-					System.out.println("Player stands");
-					break;
-					
+					System.out.println("player stands" + hand_index);
+					break;						
 				} else if(cmd == 'i') {
-					
+					if (player.hands.get(i).isOpening()) {
+						System.out.println("player is insuring");
+					}
+					else {
+						System.out.println(line + ": illegal command");
+					}
 				} else if(cmd == 'u') {
-					
+					if (player.hands.get(i).getNCards()==2) {
+						player.surrender(i);
+						System.out.println("player is surrendering");
+						break;
+					}
+					else {
+						System.out.println(line + ": illegal command");
+					}
 				} else if(cmd == 'p') {
-//					if (player.hands.get(i).getIsPair() && player.hands.get())
-//					// Ser opening hand
-//					// ser pair
-//					
-//					
-//					
-//					player.split(i);
-//					System.out.println("Player is splitting");
-//					player.addCard(i, dealer.dealCards());
-//					player.addCard(i+1, dealer.dealCards());
+					if (player.hands.get(i).isPair() && (player.hands.get(i).getNCards()==2) && (player.getNHands() <= 3)) {
+						player.split(i);
+						System.out.println("player is splitting");
+						player.addCard(i, dealer.dealCards());
+						player.addCard(i+1, dealer.dealCards());
+						player.printPlayersHand(i);
+						player.printPlayersHand(i+1);
+						i--;
+						break;
+					}
+					else {
+						System.out.println(line + ": illegal command");
+					}
 				} else if(cmd == '2') {
-					
+					if (player.hands.get(i).getNCards() == 2 && player.hands.get(i).getValue()>8 && player.hands.get(i).getValue()<12) {
+						player.doubleD(i);
+					}
+					else {
+						System.out.println(line + ": illegal command");
+					}						
 				} else if(cmd == 'a') {
 					
 				} else if(cmd == 't') {
@@ -205,7 +244,6 @@ public class Game {
 				} else
 					System.out.println(line + ": illegal command");
 			}
-				
 		}
 		// Dealer's turn
 		dealer.setVisible();
@@ -213,27 +251,27 @@ public class Game {
 			dealer.printDealersHand();
 			int dHandValue = dealer.hand.getValue();
 			if(dHandValue > 21) {
-				System.out.println("Dealer busted!");
+				System.out.println("dealer busts");
 				break;
 			}
 			if(dHandValue < 17) {
 				dealer.hit();
-				System.out.println("Dealer hits");
-			}else {
+				System.out.println("dealer hits");
+			} else {
+				if (dealer.hand.checkBlackjack())
+					System.out.println("blackjack!!");
+				else
+					System.out.println("dealer stands");
 				dealer.stand();
-				System.out.println("Dealer stands");
 				break;
 			}
 		}
-		
-		dealer.printDealersHand();
-		player.printPlayersHand(-1);		
-		
+
 		
 	}
 
 	public int result(int i) {
-		if (player.hasBlackjack(i))
+		if (player.hands.get(i).checkBlackjack())
 			if (dealer.hand.checkBlackjack())
 				return 0;
 			else
