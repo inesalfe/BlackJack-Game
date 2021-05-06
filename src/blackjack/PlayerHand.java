@@ -19,6 +19,16 @@ public class PlayerHand extends Hand {
 		isSurrender = false;
 	}
 	
+//	public void reset() {
+//		super.reset();
+//		bet = 0;
+//		isOpening = false;
+//		isSplit = false;
+//		isDoubleD = false;
+//		isPair = false;
+//		isSurrender = false;
+//	}
+	
 	public int getBet() {
 		return bet;
 	}
@@ -27,7 +37,7 @@ public class PlayerHand extends Hand {
 		bet *= 2;
 	}
 	
-	public boolean getIsSurrender() {
+	public boolean isSurrender() {
 		return isSurrender;
 	}
 	
@@ -35,7 +45,7 @@ public class PlayerHand extends Hand {
 		isSurrender = bool;
 	}
 	
-	public boolean getIsOpening() {
+	public boolean isOpening() {
 		return isOpening;
 	}
 	
@@ -43,15 +53,15 @@ public class PlayerHand extends Hand {
 		isOpening = bool;
 	}
 	
-	public boolean getIsPair() {
+	public boolean isPair() {
 		return isPair;	
 	}
 	
-	public boolean getIsDouble() {
+	public boolean isDouble() {
 		return isDoubleD;
 	}
 	
-	public boolean getIsSplit() {
+	public boolean isSplit() {
 		return isSplit;
 	}
 	
@@ -62,6 +72,12 @@ public class PlayerHand extends Hand {
 	public void addCard(Card card) {
 		super.addCard(card);
 		card.setIsUp(true);
+		if (nCards == 2) {
+			if (cards.get(0).equals(cards.get(1)))
+				isPair = true;			
+		}
+		else
+			isPair = false;
 	}
 	
 	@Override
@@ -77,16 +93,25 @@ public class PlayerHand extends Hand {
 
 	public static void main(String args[]){
 		Card c1 = new Card("A", 'D');
-		Card c3 = new Card("5", 'C');
 		Card c2 = new Card("A", 'H');
+		Card c3 = new Card("5", 'C');
 		Card c4 = new Card("6", 'S');
+		Card c5 = new Card("10", 'S');
+		Card c6 = new Card("K", 'D');
+		Card c7 = new Card("2", 'D');
 		PlayerHand h1 = new PlayerHand(10, true, false);
+		PlayerHand h2 = new PlayerHand(10, true, false);
+		PlayerHand h3 = new PlayerHand(10, true, false);
 		h1.addCard(c1);
 		h1.addCard(c2);
-		h1.addCard(c3);
-		System.out.println(h1);
-		h1.addCard(c4);
-		System.out.println(h1);
+		h2.addCard(c3);
+		h2.addCard(c4);
+		h3.addCard(c5);
+		h3.addCard(c6);
+		//h3.addCard(c7);
+		System.out.println(h1.isPair());
+		System.out.println(h2.isPair());
+		System.out.println(h3.isPair());
 	}
 	
 }

@@ -107,7 +107,24 @@ public class Card {
 	public void setIsUp(boolean visibility) {
 		isUp = visibility;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Card other = (Card) obj;
+		if (value.equals("A") && other.value.equals("A"))
+			return true;
+		if (intValue == other.intValue)
+			return true;
+		return false;
+	}
+
+
 	@Override
 	public String toString() {
 		if (isUp == true)

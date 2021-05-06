@@ -8,8 +8,8 @@ public class Hand {
 	
 	protected int value;
 	protected int nCards;
-	private boolean isBust;
-	private boolean isStanding;
+	protected boolean isBust;
+	protected boolean isStanding;
 	
 	public Hand() {
 		cards = new ArrayList<Card>();
@@ -27,7 +27,7 @@ public class Hand {
 		isStanding = bool;
 	}
 
-	public boolean getIsStanding() {
+	public boolean isStanding() {
 		return isStanding;
 	}
 	

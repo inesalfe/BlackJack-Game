@@ -169,7 +169,7 @@ public class Game {
 					player.hit(i);
 					player.addCard(i, dealer.dealCards());
 					player.printPlayersHand(i);
-					if(player.getIsBust(i)) {
+					if(player.hands.get(i).isBust()) {
 						System.out.println("Busted!");
 						break;
 					}
@@ -189,7 +189,7 @@ public class Game {
 //					
 //					
 //					
-//					player.split();
+//					player.split(i);
 //					System.out.println("Player is splitting");
 //					player.addCard(i, dealer.dealCards());
 //					player.addCard(i+1, dealer.dealCards());
@@ -211,7 +211,7 @@ public class Game {
 		dealer.setVisible();
 		while(true) {
 			dealer.printDealersHand();
-			int dHandValue = dealer.getHandValue();
+			int dHandValue = dealer.hand.getValue();
 			if(dHandValue > 21) {
 				System.out.println("Dealer busted!");
 				break;
@@ -234,14 +234,14 @@ public class Game {
 
 	public int result(int i) {
 		if (player.hasBlackjack(i))
-			if (dealer.hasBlackjack())
+			if (dealer.hand.checkBlackjack())
 				return 0;
 			else
 				return 1;
-		else if (dealer.hasBlackjack())
+		else if (dealer.hand.checkBlackjack())
 			return -1;
-		int playerScore = player.getHandValue(i);
-		int dealerScore = dealer.getHandValue();
+		int playerScore = player.hands.get(i).getValue();
+		int dealerScore = dealer.hand.getValue();
 		if (playerScore < dealerScore)
 			return -1;
 		else if (playerScore > dealerScore)

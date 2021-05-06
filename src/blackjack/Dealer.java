@@ -3,7 +3,7 @@ package blackjack;
 public class Dealer {
 	
 	private Shoe shoe;
-	private Hand hand;
+	protected Hand hand;
 	
 	private boolean isStanding;
 	
@@ -22,13 +22,13 @@ public class Dealer {
 		hand.addCard(card);
 	}
 
-	public boolean hasBlackjack() {
-		return hand.checkBlackjack();
-	}
-
-	public int getHandValue() {
-		return hand.getValue();
-	}
+//	public boolean hasBlackjack() {
+//		return hand.checkBlackjack();
+//	}
+//
+//	public int getHandValue() {
+//		return hand.getValue();
+//	}
 	
 	public void shuffle() {
 		shoe.shuffle();
@@ -54,7 +54,7 @@ public class Dealer {
 	}
 	
 	public void setVisible() {
-		hand.cards.get(1).setIsUp(true); // Isto está horrível, não vai ficar assims
+		hand.cards.get(1).setIsUp(true);
 	}
 	
 	public void clearHand() {
