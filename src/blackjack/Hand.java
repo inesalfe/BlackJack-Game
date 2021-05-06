@@ -8,15 +8,27 @@ public class Hand {
 	
 	protected int value;
 	protected int nCards;
+	private boolean isBust;
+	private boolean isStanding;
 	
 	public Hand() {
 		cards = new ArrayList<Card>();
 		value = 0;
 		nCards = 0;
+		isBust = false;
+		isStanding = false;
 	}
 	
-	public boolean checkBust() {
-		return value > 21;
+	public boolean isBust() {
+		return isBust;
+	}
+
+	public void setIsStanding(boolean bool) {
+		isStanding = bool;
+	}
+
+	public boolean getIsStanding() {
+		return isStanding;
 	}
 	
 	public boolean checkBlackjack() {
@@ -33,7 +45,7 @@ public class Hand {
 	
 	public void addCard(Card card) {
 		cards.add(card);
-		if (nCards == 0)
+		if (nCards != 1)
 			cards.get(nCards).setIsUp(true);
 		++nCards;
 		value += card.getIntValue();
@@ -46,9 +58,11 @@ public class Hand {
 				}
 			}
 		}
+		if (value > 21) {
+			isBust = true;
+		}
 	}
 	
-	// Corrigir isto com value e etc.
 	@Override
 	public String toString() {
 		String out = new String();
@@ -56,17 +70,31 @@ public class Hand {
 			out += cards.get(i).toString();
 			out += " ";
 		}
+		if (cards.get(1).getIsUp() == true)
+			out += "(" + value + ")";
 		return out;
 	}
 
 	public static void main(String args[]){
 		Card c1 = new Card("10", 'D');
 		c1.setIsUp(true);
+		Card c2 = new Card("9", 'S');
+		c2.setIsUp(true);
 		Card c3 = new Card("A", 'C');
+		c3.setIsUp(true);
 		Hand h1 = new  Hand();
 		h1.addCard(c1);
+		h1.addCard(c2);
 		h1.addCard(c3);
 		System.out.println(h1.toString());
+	}
+	
+	public void reset() {
+		cards.clear();
+		value = 0;
+		nCards = 0;
+		isBust = false;
+		isStanding = false;
 	}
 	
 }

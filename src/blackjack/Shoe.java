@@ -30,7 +30,7 @@ public class Shoe {
 			String line = new String();
 			while (scanner.hasNextLine()) {
 				line = scanner.nextLine();
-				cards.addAll(Arrays.asList(line.split(" ")));
+				cards.addAll(Arrays.asList(line.split(" ", 0)));
 			}
 			scanner.close();
 			char suit;

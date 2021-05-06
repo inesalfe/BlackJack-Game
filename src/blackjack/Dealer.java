@@ -3,21 +3,35 @@ package blackjack;
 public class Dealer {
 	
 	private Shoe shoe;
-	Hand hand;
+	private Hand hand;
 	
 	private boolean isStanding;
-	private boolean isBlackjack;
 	
 	public Dealer(int nDecks_in) {
 		shoe = new Shoe(nDecks_in);
 		hand = new Hand();
 		isStanding = false;
-		isBlackjack = hand.checkBlackjack();
 	}
 
 	public Dealer(String shoeFile_in) {
 		shoe = new Shoe(shoeFile_in);
 		hand = new Hand();
+	}
+
+	public void addCard(Card card) {
+		hand.addCard(card);
+	}
+
+	public boolean hasBlackjack() {
+		return hand.checkBlackjack();
+	}
+
+	public int getHandValue() {
+		return hand.getValue();
+	}
+	
+	public void shuffle() {
+		shoe.shuffle();
 	}
 	
 	public void hit() {
@@ -32,15 +46,19 @@ public class Dealer {
 		return shoe.getCard();
 	}
 	
-	public int result(PlayerHand hand_in) {
-		int playerScore = hand_in.getValue();
-		int dealerScore = hand.getValue();
-		if (playerScore < dealerScore)
-			return -1;
-		else if (playerScore > dealerScore)
-			return 0;
-		else
-			return 1;
+	public void printDealersHand(){
+		String out = new String();
+		out += "dealer's hand ";
+		out += hand.toString();
+		System.out.println(out);	
+	}
+	
+	public void setVisible() {
+		hand.cards.get(1).setIsUp(true); // Isto está horrível, não vai ficar assims
+	}
+	
+	public void clearHand() {
+		hand.reset();
 	}
 	
 }

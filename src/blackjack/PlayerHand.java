@@ -7,6 +7,7 @@ public class PlayerHand extends Hand {
 	private boolean isPair;
 	private boolean isDoubleD;
 	private boolean isSplit;
+	private boolean isSurrender;
 	
 	public PlayerHand(int bet_in, boolean opening, boolean split) {
 		super();
@@ -15,6 +16,7 @@ public class PlayerHand extends Hand {
 		isSplit = split;
 		isDoubleD = false;
 		isPair = false;
+		isSurrender = false;
 	}
 	
 	public int getBet() {
@@ -25,24 +27,32 @@ public class PlayerHand extends Hand {
 		bet *= 2;
 	}
 	
+	public boolean getIsSurrender() {
+		return isSurrender;
+	}
+	
+	public void setIsSurrender(boolean bool) {
+		isSurrender = bool;
+	}
+	
 	public boolean getIsOpening() {
 		return isOpening;
-		
+	}
+	
+	public void setIsOpening(boolean bool) {
+		isOpening = bool;
 	}
 	
 	public boolean getIsPair() {
-		return isPair;
-		
+		return isPair;	
 	}
 	
 	public boolean getIsDouble() {
 		return isDoubleD;
-		
 	}
 	
 	public boolean getIsSplit() {
 		return isSplit;
-		
 	}
 	
 	public void setBet(int bet_in) {
@@ -74,9 +84,9 @@ public class PlayerHand extends Hand {
 		h1.addCard(c1);
 		h1.addCard(c2);
 		h1.addCard(c3);
-		System.out.println(h1.toString());
+		System.out.println(h1);
 		h1.addCard(c4);
-		System.out.println(h1.toString());
+		System.out.println(h1);
 	}
 	
 }

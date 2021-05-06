@@ -22,7 +22,7 @@ public class Card {
 		*/
 		
 		// Variable that determines the value of each card
-		intValue = n%13;
+		intValue = n%13 + 1;
 		if (intValue > 10) {
 			
 			if (intValue == 11) 
@@ -31,14 +31,13 @@ public class Card {
 			if (intValue == 12) 
 				value = "Q";
 			
-			if (intValue == 0) 
+			if (intValue == 13) 
 				value = "K";
 		
 			intValue = 10;
 		}
-		
 		else
-			value = Integer.toString(n%13);
+			value = Integer.toString(intValue);
 		
 		if (value.equals("1")) {
 			value = "A";
@@ -118,8 +117,10 @@ public class Card {
 
 	public static void main(String args[]){
 		Card c1 = new Card("10", 'D');
-		c1.setIsUp(true);
 		System.out.println(c1.toString());
+		Card c5 = new Card(12);
+		c5.setIsUp(true);
+		System.out.println(c5.toString());
 		Card c3 = new Card("A", 'C');
 		c3.setIsUp(true);
 		System.out.println(c3.toString());

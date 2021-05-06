@@ -4,78 +4,101 @@ import java.util.*;
 
 public class Player {
 	
-	ArrayList<PlayerHand> hands;
+	protected ArrayList<PlayerHand> hands;
 	
 	private int balance;
 	private int bet; // review: Is it really needed?
-	private boolean isHitting;
-	private boolean isBust;
-	private boolean isStanding;
-	private boolean isSurrender;
-	private boolean isBlackjack;
+	private int nHands;
 	
 	public Player(int initialBet_in, int balance_in) {
 		balance = balance_in;
 		bet = initialBet_in;
-		isHitting = false;
-		isBust = false;
-		isStanding = false;
-		isSurrender = false;
-		isBlackjack = false;
+		nHands = 1;
 		hands = new ArrayList<PlayerHand>();
 		hands.add(new PlayerHand(bet, true, false));
 	}
 	
-	public void hit () {
-		isHitting = true;
+	public void hit(int i) {
+		hands.get(i).setIsOpening(false);
+	}
+
+	public boolean getIsBust(int i) {
+		return hands.get(i).isBust();
 	}
 	
-	public void stand() {
-		isStanding = true;
+	public void addCard(int i, Card card) {
+		hands.get(i).addCard(card);
+	}
+
+	public int getNHands() {
+		return nHands;
 	}
 	
-	public void surrender() {
-		isSurrender = true;
+	public void stand(int i) {
+		hands.get(i).setIsStanding(true);
+	}
+	
+	public void surrender(int i) {
+		hands.get(i).setIsSurrender(true);
+	}
+	
+	public boolean getIsStanding(int i) {
+		return hands.get(i).getIsStanding();
 	}
 	
 	public void split() {
+		nHands++;
+		balance -= bet;
 		hands.add(new PlayerHand(bet, false, true));
 		hands.add(new PlayerHand(bet, false, true));
 		hands.remove(0);
 	}
 	
-	public void doubleD() {
-		hands.get(0).setBet(2*bet);
+	public void doubleD(int i) {
+		balance -= bet;
+		hands.get(i).setBet(2*bet);
 	}
 	
 	public void placeBet(int newBet) {
 		bet = newBet;
+		balance -= bet;
 		hands.get(0).setBet(newBet);
 	}
 	
 	public void clearHands() {
 		hands.clear();
+		nHands = 1;
+		hands.add(new PlayerHand(bet, true, false));
+	}
+	
+	public int getHandValue(int i) {
+		return hands.get(i).getValue();
+	}
+
+	public boolean hasBlackjack(int i) {
+		return hands.get(i).checkBlackjack();
 	}
 
 	public void resetHands(int newBet) {
 		bet = newBet;
 		hands.add(new PlayerHand(newBet, true, false));
 	}
+
 	
-	public boolean getIsHitting () {
-		return isHitting;
+	public void updateBalance(float update) {
+		balance += update;
 	}
 	
-	public boolean getIsStanding () {
-		return isStanding;
+	public void printPlayersHand(int i){
+		String out = new String();
+		out += "player's hand ";
+		if (i != -1) {
+			out += "[" + (i+1) + "] ";
+			out += hands.get(i).toString();
+		}
+		else {
+			out += hands.get(0).toString();
+		}
+		System.out.println(out);	
 	}
-	
-	public boolean getIsBust () {
-		return isBust;
-	}
-	
-	public void updateBalance(int newBalance) {
-		balance = newBalance;
-	}
-	
 }
