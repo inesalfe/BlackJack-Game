@@ -5,19 +5,13 @@ import java.util.Scanner;
 
 public class Game {
 	
-	private char Mode;
+	private GameMode mode;
+	
 	private int minBet;
 	private int maxBet;
-	private int balance;
 	private int nDecks;
 	private int intShuffle;
-	
-	private String shoeFile;
-	private String cmdFile;
-	
-	private int sNumble;
-	private String strategy;
-	
+
 	private boolean isReady = false;
 	private boolean shuffling;
 	
@@ -25,35 +19,32 @@ public class Game {
 	private Dealer dealer;
 	
 	// Interative && Simulation
-	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, int nDecks_in, int intShuffle_in, int sNumble_in, String strategy_in) {
-		Mode = Mode_in;
+	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, int nDecks_in, int intShuffle_in, int sNumber_in, String strategy_in) {
+		if (Mode_in == 'i')
+			mode = new Interative();
+		else
+			mode = new Simulation(sNumber_in, strategy_in);
 		minBet = minBet_in;
 		maxBet = maxBet_in;
-		balance = balance_in;
 		nDecks = nDecks_in;
 		intShuffle = intShuffle_in;
-		sNumble = sNumble_in;
-		strategy = strategy_in;
 	
 		shuffling = true;
 		
-		player = new Player(minBet, balance);
+		player = new Player(minBet, balance_in);
 		dealer = new Dealer(nDecks_in);
 	}
 
 	// Debug
 	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, String shoeFile_in, String cmdFile_in) {
-		Mode = Mode_in;
+		mode = new Debug(shoeFile_in, cmdFile_in);
 		minBet = minBet_in;
 		maxBet = maxBet_in;
-		balance = balance_in;
-		shoeFile = shoeFile_in;
-		cmdFile = cmdFile_in;
 	
 		shuffling = false;
 
-		player = new Player(minBet, balance);
-		dealer = new Dealer(shoeFile);
+		player = new Player(minBet, balance_in);
+		dealer = new Dealer(shoeFile_in);
 	}
 
 	// RICARDO - Se no iníco de cada jogada o valor do intShuffle for atingido, fazer shuffle
@@ -65,36 +56,31 @@ public class Game {
 		// User bets: ready to deal (flag)
 		// Wait for d command
 		// Call deal();
-		System.out.println();
 		while(true) {
 			// reset hands and stuff
 			player.clearHands();
 			dealer.clearHand();
+			if(dealer.shoe.getNDealtCards() >= Math.ceil(intShuffle/100.0f * nDecks * 52)) {
+				shuffling = true;
+			}
 			if(shuffling) {
 				// Shuffle shoe; Either do it through dealer (dealer needs to have a shuffle method)
 				// or Game has to have a shoe object;
 				System.out.println("shuffling the shoe...");
 				dealer.shuffle();
 				shuffling = false;
+
 			}
-			InputStreamReader isr =	new InputStreamReader(System.in);	
-			BufferedReader br =	new	BufferedReader(isr);	
-			String s = null;
-			try {
-				s = br.readLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			String s = mode.getCommand();
 			String[] toks = s.split(" ", 0);
 			if(toks[0].length() == 1) {
 				if(toks[0].charAt(0) == 'b') {
 					if(isReady) {
-						System.out.println(toks[0] + ": illegal command!");
+						System.out.println(toks[0] + ": illegal command");
 					} else {
 						int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
 						if (bet < minBet || bet > maxBet) {
-							System.out.println(s + ": illegal command!");
+							System.out.println(s + ": illegal command");
 							continue;
 						}
 						player.placeBet(bet);
@@ -106,15 +92,18 @@ public class Game {
 						deal();
 						isReady = false;
 					} else {
-						System.out.println(toks[0] + ": illegal command!");
+						System.out.println(toks[0] + ": illegal command");
 					}
-					
-				}
-			}
-			
+				} else if(toks[0].charAt(0) == '$') {
+					System.out.println("Player's current balance is " + player.getBalance());		
+				} else if(toks[0].charAt(0) == 'q') {
+					System.out.println("bye");
+					System.exit(0);				
+				} else
+					System.out.println(s + ": illegal command");
+			} else
+				System.out.println(s + ": illegal command");			
 		}
-		
-
 	}
 	
 	
@@ -136,6 +125,8 @@ public class Game {
 				return 'a';
 			else if (line.equals("st"))
 				return 't';
+			else if (line.equals("$"))
+				return '$';
 			else if (line.equals("q"))
 				return 'q';
 		}
@@ -154,7 +145,6 @@ public class Game {
 		player.printPlayersHand(-1);
 		
 		// Ciclo para cada player...
-		Scanner scanner = new Scanner(System.in);
 		String line;
 		String hand_index;
 		int print_index;
@@ -177,7 +167,8 @@ public class Game {
 				hand_index = "";
 			}
 			while(true) {
-				line = scanner.nextLine();
+				//line = scanner.nextLine();
+				line = mode.getCommand();
 				char cmd = getCommand(line);
 				// get command from console or file
 				if(cmd == 'h') {
@@ -236,6 +227,8 @@ public class Game {
 					
 				} else if(cmd == 't') {
 					
+				} else if(cmd == '$') {
+					System.out.println("Player's current balance is " + player.getBalance());
 				} else if(cmd == 'q') {
 					System.out.println("bye");
 					System.exit(0);
@@ -256,24 +249,64 @@ public class Game {
 				dealer.hit();
 				System.out.println("dealer hits");
 			} else {
-				if (dealer.hand.checkBlackjack())
-					System.out.println("blackjack!!");
-				else
-					System.out.println("dealer stands");
 				dealer.stand();
+				System.out.println("dealer stands");
 				break;
 			}
 		}
+		
+		if (dealer.hand.checkBlackjack())
+			System.out.println("blackjack!!");
+		else
+			for(int i = 0; i < player.getNHands(); ++i)
+				if (player.hands.get(i).checkBlackjack()) {
+					System.out.println("blackjack!!");
+					break;
+				}
 
+			
+		for(int i = 0; i < player.getNHands(); ++i) {
+			float mult = 1;
+			int bet =  player.hands.get(i).getBet();
+			String res_str = new String();
+
+			if(player.hands.get(i).isSurrender()) {
+				player.updateBalance(0.5f*bet);
+				System.out.println("Player's current balance is " + player.getBalance());
+			}
+			else {
+				int res = result(i);
+				if(res != 0) {
+					if(res == -1) {
+						mult = 0;
+						res_str += "loses";
+					} else {
+						boolean splited_blackjack = (player.hands.get(i).isSplit() && 
+								player.hands.get(i).cards.get(0).getValue().equals("A"));
+						mult = (player.hands.get(i).checkBlackjack() && !(splited_blackjack) )  ? 2.5f : 2;
+						res_str += "wins";
+					}
+				} else
+					res_str += "pushes";
+				
+				player.updateBalance(mult*bet);
+				
+				hand_index = "";
+				if(player.getNHands() > 1)
+					hand_index = "[" + (i+1) + "]";
+				
+				System.out.println("Player " + res_str + " " + hand_index + " and his current balance is " + player.getBalance());
+			}
+		}
+		System.out.println();
 		
 	}
 
-	public int result(int i) {
+	public int result(int i) { // 1 - player wins, 0 - player pushes, -1 - player loses
+		if(player.hands.get(i).isBust()) return -1;
+		if(dealer.hand.isBust()) return 1;
 		if (player.hands.get(i).checkBlackjack())
-			if (dealer.hand.checkBlackjack())
-				return 0;
-			else
-				return 1;
+			return dealer.hand.checkBlackjack() ? 0 : 1;
 		else if (dealer.hand.checkBlackjack())
 			return -1;
 		int playerScore = player.hands.get(i).getValue();
@@ -281,9 +314,9 @@ public class Game {
 		if (playerScore < dealerScore)
 			return -1;
 		else if (playerScore > dealerScore)
-			return 0;
-		else
 			return 1;
+		else
+			return 0;
 	}
 
 	public static void main(String args[]){

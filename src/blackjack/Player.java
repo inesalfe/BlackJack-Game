@@ -6,7 +6,7 @@ public class Player {
 	
 	protected ArrayList<PlayerHand> hands;
 	
-	private int balance;
+	private float balance;
 	private int bet; // review: Is it really needed?
 	private int nHands;
 	
@@ -39,7 +39,11 @@ public class Player {
 	}
 	
 	public void surrender(int i) {
-		hands.get(i).setIsSurrender(true);
+		hands.get(i).setIsSurrender();
+	}
+	
+	public void insurance() {
+		
 	}
 	
 //	public boolean getIsStanding(int i) {
@@ -59,6 +63,7 @@ public class Player {
 	public void doubleD(int i) {
 		balance -= bet;
 		hands.get(i).setBet(2*bet);
+		hands.get(i).setIsDoubleD();
 	}
 	
 	public void placeBet(int newBet) {
@@ -85,6 +90,10 @@ public class Player {
 //		bet = newBet;
 //		hands.add(new PlayerHand(newBet, true, false));
 //	}
+
+	public float getBalance() {
+		return balance;
+	}
 	
 	public void updateBalance(float update) {
 		balance += update;
@@ -102,4 +111,5 @@ public class Player {
 		}
 		System.out.println(out);	
 	}
+
 }

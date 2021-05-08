@@ -62,6 +62,14 @@ public class Hand {
 			isBust = true;
 		}
 	}
+
+	public void reset() {
+		cards.clear();
+		value = 0;
+		nCards = 0;
+		isBust = false;
+		isStanding = false;
+	}
 	
 	@Override
 	public String toString() {
@@ -88,13 +96,6 @@ public class Hand {
 		h1.addCard(c3);
 		System.out.println(h1.toString());
 	}
-	
-	public void reset() {
-		cards.clear();
-		value = 0;
-		nCards = 0;
-		isBust = false;
-		isStanding = false;
-	}
+
 	
 }

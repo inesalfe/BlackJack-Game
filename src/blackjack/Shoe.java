@@ -16,7 +16,7 @@ public class Shoe {
 		shoe = new ArrayList<Card>();
 		for (int j = 0; j < nDecks; j++) {
 			Deck deck = new Deck();
-			shoe.addAll(deck.getDeck());
+			shoe.addAll(deck.deck);
 		}
 	}
 	
@@ -55,11 +55,16 @@ public class Shoe {
 		Card card = shoe.get(0);
 		shoe.add(card);
 		shoe.remove(0);
+		++nDealtCards;
 		return card;
 	}
 	
 	public int getNDealtCards() {
 		return nDealtCards;
+	}
+	
+	public void resetNDealtCards() {
+		nDealtCards = 0;
 	}
 	
 	@Override

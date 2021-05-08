@@ -38,17 +38,11 @@ public class PlayerHand extends Hand {
 	}
 	
 	public boolean isSurrender() {
-		
-		/* Conditions to Surrender
-		 * 
-		 * 
-		 * */
-		
 		return isSurrender;
 	}
 	
-	public void setIsSurrender(boolean bool) {
-		isSurrender = bool;
+	public void setIsSurrender() {
+		isSurrender = true;
 	}
 	
 	public boolean isOpening() {
@@ -65,6 +59,10 @@ public class PlayerHand extends Hand {
 	
 	public boolean isDouble() {
 		return isDoubleD;
+	}
+	
+	public void setIsDoubleD() {
+		isDoubleD = true;
 	}
 	
 	public boolean isSplit() {
@@ -85,6 +83,7 @@ public class PlayerHand extends Hand {
 		else
 			isPair = false;
 	}
+	
 	
 	@Override
 	public String toString() {

@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Deck {
 
-	private ArrayList<Card> deck;
+	protected ArrayList<Card> deck;
 	
 	public Deck() {
 		deck = new ArrayList<Card>();
@@ -12,9 +12,9 @@ public class Deck {
 			deck.add(new Card(i));
 	}
 	
-	public ArrayList<Card> getDeck() {
-		return deck;
-	}
+//	public ArrayList<Card> getDeck() {
+//		return deck;
+//	}
 
 	@Override
 	public String toString() {

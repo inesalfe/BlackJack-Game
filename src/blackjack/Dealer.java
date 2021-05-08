@@ -2,7 +2,7 @@ package blackjack;
 
 public class Dealer {
 	
-	private Shoe shoe;
+	protected Shoe shoe;
 	protected Hand hand;
 	
 	private boolean isStanding;
@@ -32,6 +32,7 @@ public class Dealer {
 	
 	public void shuffle() {
 		shoe.shuffle();
+		shoe.resetNDealtCards();
 	}
 	
 	public void hit() {
