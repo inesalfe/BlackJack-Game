@@ -8,6 +8,7 @@ public class PlayerHand extends Hand {
 	private boolean isDoubleD;
 	private boolean isSplit;
 	private boolean isSurrender;
+	private boolean isHitting;
 	
 	public PlayerHand(int bet_in, boolean opening, boolean split) {
 		super();
@@ -76,12 +77,11 @@ public class PlayerHand extends Hand {
 	public void addCard(Card card) {
 		super.addCard(card);
 		card.setIsUp(true);
+		isPair = false;
 		if (nCards == 2) {
 			if (cards.get(0).equals(cards.get(1)))
 				isPair = true;			
 		}
-		else
-			isPair = false;
 	}
 	
 	
@@ -117,6 +117,14 @@ public class PlayerHand extends Hand {
 		System.out.println(h1.isPair());
 		System.out.println(h2.isPair());
 		System.out.println(h3.isPair());
+	}
+
+	public boolean isHitting() {
+		return isHitting;
+	}
+
+	public void setHitting(boolean isHitting) {
+		this.isHitting = isHitting;
 	}
 	
 }

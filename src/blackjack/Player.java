@@ -10,6 +10,8 @@ public class Player {
 	private int bet; // review: Is it really needed?
 	private int nHands;
 	
+	private boolean isSplitting;
+	
 	public Player(int initialBet_in, int balance_in) {
 		balance = balance_in;
 		bet = initialBet_in;
@@ -20,6 +22,7 @@ public class Player {
 	
 	public void hit(int i) {
 		hands.get(i).setIsOpening(false);
+		hands.get(i).setHitting(true);
 	}
 
 //	public boolean getIsBust(int i) {
@@ -51,6 +54,7 @@ public class Player {
 //	}
 	
 	public void split(int i) {
+		isSplitting = false;
 		nHands++;
 		balance -= bet;
 		hands.add(i+1, new PlayerHand(bet, false, true));
@@ -64,6 +68,7 @@ public class Player {
 		balance -= bet;
 		hands.get(i).setBet(2*bet);
 		hands.get(i).setIsDoubleD();
+		hands.get(i).setHitting(true);
 	}
 	
 	public void placeBet(int newBet) {
@@ -110,6 +115,30 @@ public class Player {
 			out += hands.get(0).toString();
 		}
 		System.out.println(out);	
+	}
+
+	public boolean isHittingHand(int i) {
+		return hands.get(i).isHitting();
+	}
+
+	public boolean isStandingHand(int i) {
+		return hands.get(i).isStanding();
+	}
+
+	public boolean isSurrendingHand(int i) {
+		return hands.get(i).isSurrender();
+	}
+
+	public boolean isSplitting() {
+		return isSplitting;
+	}
+
+	public void setIsSplitting(boolean b) {
+		this.isSplitting = b;
+	}
+
+	public boolean isDoubleDHand(int i) {
+		return hands.get(i).isDouble();
 	}
 
 }

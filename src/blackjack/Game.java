@@ -1,8 +1,5 @@
 package blackjack;
 
-import java.io.*;
-import java.util.Scanner;
-
 public class Game {
 	
 	private GameMode mode;
@@ -73,36 +70,33 @@ public class Game {
 			}
 			String s = mode.getCommand();
 			String[] toks = s.split(" ", 0);
-			if(toks[0].length() == 1) {
-				if(toks[0].charAt(0) == 'b') {
-					if(isReady) {
-						System.out.println(toks[0] + ": illegal command");
-					} else {
-						int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
-						if (bet < minBet || bet > maxBet) {
-							System.out.println(s + ": illegal command");
-							continue;
-						}
-						player.placeBet(bet);
-						System.out.println("player is betting " + bet);
-						isReady = true;							
-					}
-				}else if(toks[0].charAt(0) == 'd') {
-					if(isReady) {
-						deal();
-						isReady = false;
-					} else {
-						System.out.println(toks[0] + ": illegal command");
-					}
-				} else if(toks[0].charAt(0) == '$') {
-					System.out.println("Player's current balance is " + player.getBalance());		
-				} else if(toks[0].charAt(0) == 'q') {
-					System.out.println("bye");
-					System.exit(0);				
-				} else
+			if(toks[0].charAt(0) == 'b') {
+				if(isReady) {
 					System.out.println(s + ": illegal command");
+				} else {
+					int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
+					if (bet < minBet || bet > maxBet) {
+						System.out.println(s + ": illegal command");
+						continue;
+					}
+					player.placeBet(bet);
+					System.out.println("player is betting " + bet);
+					isReady = true;							
+				}
+			}else if(toks[0].charAt(0) == 'd') {
+				if(isReady) {
+					deal();
+					isReady = false;
+				} else {
+					System.out.println(toks[0] + ": illegal command");
+				}
+			} else if(toks[0].charAt(0) == '$') {
+				System.out.println("Player's current balance is " + player.getBalance());		
+			} else if(toks[0].charAt(0) == 'q') {
+				System.out.println("bye");
+				System.exit(0);				
 			} else
-				System.out.println(s + ": illegal command");			
+				continue;			
 		}
 	}
 	
@@ -148,7 +142,11 @@ public class Game {
 		String line;
 		String hand_index;
 		int print_index;
+		
 		for(int i = 0; i < player.getNHands(); ++i) {
+			print_index = -1;
+			hand_index = "";
+			// If the player has more than one hand (already splitted)
 			if(player.getNHands() > 1) {
 				print_index = i;
 				hand_index =  " [" + (i+1) + "] ";
@@ -162,78 +160,152 @@ public class Game {
 					System.out.println("playing 4th hand...");
 				player.printPlayersHand(print_index);
 			}
-			else {
-				print_index = -1;
-				hand_index = "";
-			}
+
+			
 			while(true) {
-				//line = scanner.nextLine();
-				line = mode.getCommand();
+				line = mode.getCommand(); // get command from console or file
 				char cmd = getCommand(line);
-				// get command from console or file
 				if(cmd == 'h') {
 					if (player.hands.get(i).isBust() || player.hands.get(i).isStanding() || player.hands.get(i).isSurrender() || (player.hands.get(i).isDouble() && (player.hands.get(i).getNCards() >= 3)) || (player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() >= 2) && (player.hands.get(i).cards.get(0).getValue().equals("A"))))
 						System.out.println(line + ": illegal command");
-					else {
-						System.out.println("player hits");
+					else
 						player.hit(i);
-						player.addCard(i, dealer.dealCards());
-						player.printPlayersHand(print_index);
-						if(player.hands.get(i).isBust()) {
-							System.out.println("player busts" + hand_index);
-							break;
-						}						
-					}
-				} else if(cmd == 's') {
+				}
+				else if(cmd == 's') {
 					player.stand(i);
-					System.out.println("player stands" + hand_index);
-					break;						
-				} else if(cmd == 'i') {
-					if (player.hands.get(i).isOpening()) {
+				} 
+				else if(cmd == 'i') { // TODO
+					if (player.hands.get(i).isOpening())
 						System.out.println("player is insuring");
-					}
-					else {
+					else
 						System.out.println(line + ": illegal command");
-					}
-				} else if(cmd == 'u') {
-					if (player.hands.get(i).getNCards()==2) {
+				}
+				else if(cmd == 'u') {
+					if (player.hands.get(i).getNCards()==2)
 						player.surrender(i);
-						System.out.println("player is surrendering");
-						break;
-					}
-					else {
+					else
 						System.out.println(line + ": illegal command");
-					}
-				} else if(cmd == 'p') {
-					if (player.hands.get(i).isPair() && (player.hands.get(i).getNCards()==2) && (player.getNHands() <= 3)) {
-						player.split(i);
-						System.out.println("player is splitting");
-						player.addCard(i, dealer.dealCards());
-						player.addCard(i+1, dealer.dealCards());
-						i--;
-						break;
-					}
-					else {
+				}
+				else if(cmd == 'p') {
+					if (player.hands.get(i).isPair() && (player.getNHands() <= 3))
+						player.setIsSplitting(true);
+					else
 						System.out.println(line + ": illegal command");
-					}
-				} else if(cmd == '2') {
-					if (player.hands.get(i).getNCards() == 2 && player.hands.get(i).getValue()>8 && player.hands.get(i).getValue()<12) {
+				}
+				else if(cmd == '2') {
+					if (player.hands.get(i).getNCards() == 2 && player.hands.get(i).getValue()>8 && player.hands.get(i).getValue()<12)
 						player.doubleD(i);
-					}
-					else {
-						System.out.println(line + ": illegal command");
-					}						
-				} else if(cmd == 'a') {
-					
-				} else if(cmd == 't') {
-					
+					else
+						System.out.println(line + ": illegal command");					
+				} 
+				else if(cmd == 'a') { //TODO
+				} else if(cmd == 't') { //TODO
 				} else if(cmd == '$') {
 					System.out.println("Player's current balance is " + player.getBalance());
 				} else if(cmd == 'q') {
 					System.out.println("bye");
 					System.exit(0);
 				} else
-					System.out.println(line + ": illegal command");
+					continue;
+				
+		
+				if(player.isHittingHand(i)) { // isto devia ser uma flag do player ou da hand? Se calhar player, mas está na hand
+					if(!player.isDoubleDHand(i)) System.out.println("player hits");
+					player.addCard(i, dealer.dealCards());
+					player.printPlayersHand(print_index);
+					player.hands.get(i).setHitting(false); // make this a player method
+					if(player.hands.get(i).isBust()) {
+						System.out.println("player busts" + hand_index);
+						break;
+					}
+					if(player.isDoubleDHand(i)) {
+						player.stand(i); // Not really needed, just for completeness
+						break;					
+					}
+				} else if(player.isStandingHand(i)) {
+					System.out.println("player stands" + hand_index);
+					break;
+				} else if(player.isSurrendingHand(i)) {
+					System.out.println("player is surrendering");
+					break;
+				} else if(player.isSplitting()) {
+					System.out.println("player is splitting");
+					player.split(i);
+					player.addCard(i, dealer.dealCards());
+					player.addCard(i+1, dealer.dealCards());
+					i--;
+					break;
+				}
+				
+//				if(cmd == 'h') {
+//					if (player.hands.get(i).isBust() || player.hands.get(i).isStanding() || player.hands.get(i).isSurrender() || (player.hands.get(i).isDouble() && (player.hands.get(i).getNCards() >= 3)) || (player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() >= 2) && (player.hands.get(i).cards.get(0).getValue().equals("A"))))
+//						System.out.println(line + ": illegal command");
+//					else {
+//						System.out.println("player hits");
+//						player.hit(i);
+//						player.addCard(i, dealer.dealCards());
+//						player.printPlayersHand(print_index);
+//						if(player.hands.get(i).isBust()) {
+//							System.out.println("player busts" + hand_index);
+//							break;
+//						}						
+//					}
+//				} 
+//				else if(cmd == 's') {
+//					player.stand(i);
+//					System.out.println("player stands" + hand_index);
+//					break;						
+//				} 
+//				else if(cmd == 'i') {
+//					if (player.hands.get(i).isOpening()) {
+//						System.out.println("player is insuring");
+//					}
+//					else {
+//						System.out.println(line + ": illegal command");
+//					}
+//				} 
+//				else if(cmd == 'u') {
+//					if (player.hands.get(i).getNCards()==2) {
+//						player.surrender(i);
+//						System.out.println("player is surrendering");
+//						break;
+//					}
+//					else {
+//						System.out.println(line + ": illegal command");
+//					}
+//				} 
+//				else if(cmd == 'p') {
+//					if (player.hands.get(i).isPair() && (player.getNHands() <= 3)) {
+//						player.split(i);
+//						System.out.println("player is splitting");
+//						player.addCard(i, dealer.dealCards());
+//						player.addCard(i+1, dealer.dealCards());
+//						i--;
+//						break;
+//					}
+//					else {
+//						System.out.println(line + ": illegal command");
+//					}
+//				} 
+//				else if(cmd == '2') {
+//					if (player.hands.get(i).getNCards() == 2 && player.hands.get(i).getValue()>8 && player.hands.get(i).getValue()<12) {
+//						player.doubleD(i);
+//					}
+//					else {
+//						System.out.println(line + ": illegal command");
+//					}						
+//				} 
+//				else if(cmd == 'a') {
+//					
+//				} else if(cmd == 't') {
+//					
+//				} else if(cmd == '$') {
+//					System.out.println("Player's current balance is " + player.getBalance());
+//				} else if(cmd == 'q') {
+//					System.out.println("bye");
+//					System.exit(0);
+//				} else
+//					System.out.println(line + ": illegal command");
 			}
 		}
 		// Dealer's turn
