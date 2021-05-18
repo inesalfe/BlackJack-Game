@@ -15,8 +15,8 @@ public class Shoe {
 		nDealtCards = 0;
 		shoe = new ArrayList<Card>();
 		for (int j = 0; j < nDecks; j++) {
-			Deck deck = new Deck();
-			shoe.addAll(deck.deck);
+			for (int i = 0; i < 52; i++)
+				shoe.add(new Card(i));
 		}
 	}
 	
@@ -49,6 +49,9 @@ public class Shoe {
 	
 	public void shuffle() {
 		Collections.shuffle(shoe);
+		for(Card c : shoe) {
+			c.setIsUp(false);
+		}
 	}
 
 	public Card getCard() {

@@ -64,12 +64,6 @@ public class Interative implements GameMode {
 	public static void main(String args[]) {
 		GameMode inter = new Interative();
 		System.out.println(inter.getCommand());
-//		while(true) {
-//			String str = inter.getCommand();
-//			System.out.println(str);
-//			if(str.equals("q"))
-//				System.exit(0);
-//		}
 	}
 	
 }

@@ -107,6 +107,18 @@ public class Card {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + intValue;
+		result = prime * result + (isSoft ? 1231 : 1237);
+		result = prime * result + (isUp ? 1231 : 1237);
+		result = prime * result + suit;
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

@@ -1,7 +1,5 @@
 package blackjack;
 
-import java.util.Scanner;
-
 public class Simulation implements GameMode {
 
 	int sNumber;

@@ -71,6 +71,10 @@ public class Hand {
 		isStanding = false;
 	}
 	
+	public Card getFirst() {
+		return cards.get(0);
+	}
+	
 	@Override
 	public String toString() {
 		String out = new String();

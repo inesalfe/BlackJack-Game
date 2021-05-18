@@ -20,16 +20,6 @@ public class PlayerHand extends Hand {
 		isSurrender = false;
 	}
 	
-//	public void reset() {
-//		super.reset();
-//		bet = 0;
-//		isOpening = false;
-//		isSplit = false;
-//		isDoubleD = false;
-//		isPair = false;
-//		isSurrender = false;
-//	}
-	
 	public int getBet() {
 		return bet;
 	}
@@ -113,7 +103,7 @@ public class PlayerHand extends Hand {
 		h2.addCard(c4);
 		h3.addCard(c5);
 		h3.addCard(c6);
-		//h3.addCard(c7);
+		h3.addCard(c7);
 		System.out.println(h1.isPair());
 		System.out.println(h2.isPair());
 		System.out.println(h3.isPair());

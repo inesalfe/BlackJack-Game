@@ -5,12 +5,12 @@ public class Dealer {
 	protected Shoe shoe;
 	protected Hand hand;
 	
-	private boolean isStanding;
+//	private boolean isStanding;
 	
 	public Dealer(int nDecks_in) {
 		shoe = new Shoe(nDecks_in);
 		hand = new Hand();
-		isStanding = false;
+//		isStanding = false;
 	}
 
 	public Dealer(String shoeFile_in) {
@@ -39,9 +39,9 @@ public class Dealer {
 		hand.addCard(dealCards());
 	}
 	
-	public void stand() {
-		isStanding = true;
-	}
+//	public void stand() {
+//		isStanding = true;
+//	}
 	
 	public Card dealCards() {
 		return shoe.getCard();
@@ -61,5 +61,5 @@ public class Dealer {
 	public void clearHand() {
 		hand.reset();
 	}
-	
+		
 }
