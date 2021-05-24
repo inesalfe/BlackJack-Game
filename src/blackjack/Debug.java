@@ -6,11 +6,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/** Class relative to the selection of game mode 
+ * 
+ * @param cmds List of commands
+ * @param cmdFile Name of the file with the commands
+ * 
+ */
 public class Debug implements GameMode {
 
 	ArrayList<String> cmds;
 	String cmdFile;
 	
+	
+	/** Debug Mode.
+	 * 
+	 * @param cmdFile_in Name of the file with the commands.
+	 * 
+	 */
 	public Debug (String cmdFile_in) {
 		
 		cmdFile = cmdFile_in;		
@@ -26,7 +38,8 @@ public class Debug implements GameMode {
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Invalid command file: " + e);
+			System.exit(0);
 		}		
 		
 		for (int i = 0; i < cmds.size(); i++) {
@@ -38,11 +51,28 @@ public class Debug implements GameMode {
 		}
 	}
 	
-	public String getCommand() {
+	/** Gets a valid command.
+	 * 
+	 * @return <h> Hit
+	 * @return <s> Stand
+	 * @return <d> Deal
+	 * @return <i> Insurance
+	 * @return <b> Bet
+	 * @return <u> Surrender
+	 * @return <p> Split
+	 * @return <2> Double
+	 * @return <ad> advice
+	 * @return <st> statistics
+	 * @return <$> Balance
+	 * @return <q> Quit
+	 * 
+	*/
+	@Override
+	public String getPlayCommand() {
 		if(cmds.size() == 0) return "q";
 		String next_cmd = cmds.get(0);
 		cmds.remove(0);
-		System.out.println("> " + next_cmd);
+		System.out.println("# " + next_cmd);
 		if (next_cmd.length() <= 2) {
 			if (next_cmd.equals("h"))
 				return "h";
@@ -76,6 +106,12 @@ public class Debug implements GameMode {
 		return "";
 	}
 
+	
+	/** Converts to string
+	 * 
+	 * @return out Resulting String
+	 * 
+	 */
 	@Override
 	public String toString() {
 		String out = new String();
@@ -86,6 +122,12 @@ public class Debug implements GameMode {
 		return out;
 	}
 
+	/** Evaluates a string and checks for a number
+	 * 
+	 * @param strNum String 
+	 * @return true If the string contains a number
+	 * @return false If the string does not contain a number
+	 */
 	public static boolean isNumeric(String strNum) {
 	    if (strNum == null) {
 	        return false;
@@ -98,9 +140,27 @@ public class Debug implements GameMode {
 	    return true;
 	}
 	
-	public static void main(String args[]){
-		GameMode debug = new Debug("cmd-file.txt");
-		System.out.println(debug);
+	/** Gets Commands relative to the bet
+	 */
+	@Override
+	public String getBetCommand() {
+		return getPlayCommand();
+	}
+
+	/** Gets commands relative to play
+	 * 
+	 * @param p_hand Player's hand
+	 * @param d_hand Dealer's hand
+	 * @param bet Value of the bet
+	 * 
+	 */
+	@Override
+	public String getPlayCommand(int nHands, PlayerHand p_hand, Hand d_hand, int bet) {
+		return getPlayCommand();
 	}
 	
+//	public static void main(String args[]){
+//		GameMode debug = new Debug("cmd-file.txt");
+//		System.out.println(debug);
+//	}	
 }

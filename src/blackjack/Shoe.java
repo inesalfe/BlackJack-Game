@@ -7,7 +7,7 @@ import java.util.*;
 public class Shoe {
 	
 	private ArrayList<Card> shoe;
-	private int nDecks; // Ver se vale a pena manter esta variável
+	private int nDecks;
 	private int nDealtCards;
 	
 	public Shoe(int nDecks_in) {
@@ -43,8 +43,14 @@ public class Shoe {
 				shoe.add(new Card(value, suit));
 			}			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Invalid shoe file: " + e);
+			System.exit(0);
 		}
+		nDecks = cards.size()/52;
+	}
+	
+	public int getNDecks() {
+		return nDecks;
 	}
 	
 	public void shuffle() {

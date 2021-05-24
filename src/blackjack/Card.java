@@ -1,6 +1,15 @@
 package blackjack;
 
+/** Class relative to the card and its attributes.
+ * 
+ * @param suit Represents the suit of the card (spades, clubs, diamonds, hearts).
+ * @param intValue Value associated with each number or figure.
+ * @param isUp Evaluates if the card is turned up and therefore visible.
+ * @param isUp Evaluates if the Ace values 1 or 11 points.
+ * 
+*/
 public class Card {
+	
 
 	private String value;
 	private char suit;
@@ -8,6 +17,11 @@ public class Card {
 	private boolean isUp;
 	private boolean isSoft;
 	
+	/** Used to create regular cards.
+	 * 
+	 * @param n Index of the card 
+	 * 
+	*/
 	public Card(int n) {
 		
 		isUp = false;
@@ -65,6 +79,12 @@ public class Card {
 		isSoft = (value.equals("A"));
 	}
 	
+	/** Used to create cards.
+	 * 
+	 * @param value_in Stores the value.
+	 * @param suit_in Stores the suit for each card.
+	 * 
+	*/
 	public Card(String value_in, char suit_in) {
 		isUp = false;
 		isSoft = value_in.equals("A");
@@ -78,30 +98,67 @@ public class Card {
 			intValue = Integer.parseInt(value_in);
 	}
 	
+	/** Gets the value of the card.
+	 * 
+	 * @return value Value of the card
+	 * 
+	*/
 	public String getValue() {
 		return value;
 	}
 	
+	/** Gets the suit of the card.
+	 * 
+	 * @return suit Suit of the card.
+	 * 
+	*/
 	public char getSuit() {
 		return suit;
 	}
 	
+	/** Gets the value which corresponds to each number or figure.
+	 *  
+	 * @return intValue Value associated with number or figure.
+	 * 
+	*/
 	public int getIntValue() {
 		return intValue;
 	}
 	
+	/** Gets the variable which determines if the card is face up. 
+	 * 
+	 * @return isUp Evaluates if the card is turned up and therefore visible.
+	 * 
+	*/
 	public boolean getIsUp() {
 		return isUp;
 	}
 	
+	/** Sets a flag isSoft.
+	 * 
+	 * @param flag Verifies the state of the card.
+	 * @return isSoft Flag that determines if the ace value is soft.
+	 * 
+	*/
 	public void setSoft(boolean flag) {
 		isSoft = flag;
 	}
 	
+	/** Gets the variable isSoft, which determines the value of the Ace.
+	 * 
+	 * @return isUp Evaluates if the card is turned up and therefore visible.
+	 * 
+	*/
 	public boolean isSoft() {
 		return isSoft;
-	}
+	} 
 	
+	/** Sets the variable isUp.
+	 * 
+	 * @param visibility Boolean which stores whether or not the card is faced up.
+	 * @return isUp state of the card.
+	 * 
+	*/
 	public void setIsUp(boolean visibility) {
 		isUp = visibility;
 	}
@@ -134,6 +191,8 @@ public class Card {
 		return false;
 	}
 
+	/** Turns the result into a string
+	 */
 	@Override
 	public String toString() {
 		if (isUp == true)
@@ -141,6 +200,11 @@ public class Card {
 		else return "X";
 	}
 
+	/** Main method.
+	 *  
+	 * @param args.
+	 * 
+	 */
 	public static void main(String args[]){
 		Card c1 = new Card("10", 'D');
 		System.out.println(c1.toString());

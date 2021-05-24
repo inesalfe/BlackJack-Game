@@ -2,17 +2,37 @@ package blackjack;
 
 import java.util.Scanner;
 
+/** Class relative to the selection of the interactive game mode
+ * 
+ * @param kb Selection of game mode
+ * 
+ */
 public class Interative implements GameMode {
 
-	String cmd;
-	private static Scanner kb = new Scanner(System.in);
+	private static Scanner kb;
 	
 	public Interative () {
-		cmd = null;
+		kb = new Scanner(System.in);
 	}
-
-	public String getCommand() {
-		
+	
+	/** Gets the playable command
+	 * 
+	 * @return <h> Hit
+	 * @return <s> Stand
+	 * @return <d> Deal
+	 * @return <i> Insurance
+	 * @return <b> Bet
+	 * @return <u> Surrender
+	 * @return <p> Split
+	 * @return <2> Double
+	 * @return <ad> advice
+	 * @return <st> statistics
+	 * @return <$> Balance
+	 * @return <q> Quit
+	 * 
+	 */
+	@Override
+	public String getPlayCommand() {
 		String line = kb.nextLine();
 		if (line.length() <= 2) {
 			if (line.equals("h"))
@@ -46,24 +66,45 @@ public class Interative implements GameMode {
 			}
 		}
 		System.out.println(line + ": illegal command");
-		return "\0";
+		return "";
 	}
 
+	/** Checks if it is reading a number.
+	 * 
+	 * @param strNum String.
+	 * @return true If the string is a number.
+	 * @return false If the string is not a number.
+	 * 
+	 */
 	public static boolean isNumeric(String strNum) {
 	    if (strNum == null) {
 	        return false;
 	    }
 	    try {
-	        int d = Integer.parseInt(strNum);
+	        Integer.parseInt(strNum);
 	    } catch (NumberFormatException nfe) {
 	        return false;
 	    }
 	    return true;
 	}
-	
-	public static void main(String args[]) {
-		GameMode inter = new Interative();
-		System.out.println(inter.getCommand());
+
+	/** Gets valid command relative to bet
+	 */
+	@Override
+	public String getBetCommand() {
+		return getPlayCommand();
 	}
+
+	/** Gets valid playable command
+	 */
+	@Override
+	public String getPlayCommand(int nHands, PlayerHand p_hand, Hand d_hand, int bet) {
+		return getPlayCommand();
+	}
+	
+//	public static void main(String args[]) {
+//		GameMode inter = new Interative();
+//		System.out.println(inter.getPlayCommand());
+//	}
 	
 }
