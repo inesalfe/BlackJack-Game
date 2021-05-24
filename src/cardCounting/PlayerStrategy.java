@@ -1,4 +1,7 @@
-package blackjack;
+package cardCounting;
+
+import blackjack.Hand;
+import blackjack.PlayerHand;
 
 /** Class which refers to the player's advisable strategy
  * 
@@ -19,12 +22,26 @@ public abstract class PlayerStrategy {
 	protected boolean canDouble;
 	protected boolean canSplit;
 	
+	/** Calculates the best strategy
+	 * 
+	 * @param max_bet_in Maximum value for the bet
+	 * @param DDmin_in Minimum possible value for a Double down.
+	 * @param DDmax_in Maximum possible value for a Double down.
+	 */
 	public PlayerStrategy(int max_bet_in, int DDmin_in, int DDmax_in) {
 		max_bet = max_bet_in;
 		DDmin = DDmin_in;
 		DDmax = DDmax_in;
 	}
 	
+	/** Calculates the next play based on the defined strategy
+	 * 
+	 * @param nHands Number of hands.
+	 * @param p_hand p_hand Player's hand.
+	 * @param d_Hand d_hand Dealer's hand.
+	 * @param bet Value of the bet.
+	 * 
+	 */
 	public abstract String getNextPlay(int nHands, PlayerHand p_hand, Hand d_Hand, int bet);
 	
 //	public static void main(String args[]){

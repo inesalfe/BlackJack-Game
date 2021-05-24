@@ -1,4 +1,8 @@
-package blackjack;
+package cardCounting;
+
+import blackjack.Card;
+import blackjack.Hand;
+import blackjack.PlayerHand;
 
 /** Class relative to the card and its attributes.
  * 
@@ -62,7 +66,7 @@ public class HiLo extends PlayerStrategy {
 		int p_hand_value = p_hand.getValue();
 		int d_card_value = d_hand.getFirst().getIntValue();
 		if(d_hand.getFirst().getValue().equals("A")) 
-			if(true_count >= 3) 
+			if(true_count >= 3 && ) 
 				return "i";
 		if(p_hand_value == 9) {
 			if(d_card_value == 2) {

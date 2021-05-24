@@ -1,5 +1,6 @@
-package blackjack;
+package cardCounting;
 
+import blackjack.Card;
 
 /** Creates hands of cards.
  * 

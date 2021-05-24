@@ -3,7 +3,13 @@ package blackjack;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-// TODO : put shoe here
+import cardCounting.Ace5;
+import cardCounting.Basic;
+import cardCounting.BettingStrategy;
+import cardCounting.HiLo;
+import cardCounting.PlayerStrategy;
+import cardCounting.StandardStrategy;
+
 
 /** Class relative to the game.
  * 
@@ -28,8 +34,9 @@ public class Game {
 	private int intShuffle;
 
 	private boolean isReady = false;
-	private boolean start_dealing = false;
+	private boolean startRound = false;
 	private boolean shuffling;
+	private boolean noHandsLeft;
 	
 	private Player player;
 	private Dealer dealer;
@@ -137,102 +144,8 @@ public class Game {
 
 	}
 	
-	/** Simulates a game
-	 */
-	public void play() {
-				
-		while(true) {
-			
-			player.clearHands();
-			dealer.clearHand();
-			/* Shuffle if the number of dealt cards surpassed the intShuffle threshold,
-			* unless the program is running on Debug Mode */
-			if(!(mode instanceof Debug) && dealer.shoe.getNDealtCards() >= Math.ceil(intShuffle/100.0f * nDecks * 52)) {
-				shuffling = true;
-			}
-			if(shuffling) {
-				if ((mode instanceof Simulation))
-					((Simulation) mode).incCurrSNumber();
-				for (int i = 0; i < bet_strat.size(); i++)
-					bet_strat.get(i).resetCount();
-				if ((game_strat.get(0) instanceof HiLo))
-					((HiLo) game_strat.get(0)).resetCounts();
-				System.out.println("shuffling the shoe...");
-				dealer.shuffle();
-				shuffling = false;
-			}
-			/* Gets a command from a source, either the command line, a file or the simulator 
-			 * Valid commands at this stage: b [<value>] and d, in this order;
-			 * isReady flags that a "d" command should be issued; no more "b" commands are accepted.*/
-			String s = mode.getBetCommand();
-			if(s.isBlank()) continue; // Command in a bad format; "\0" was returned;
-			String[] toks = s.split(" ", 0);
-			if(toks[0].charAt(0) == 'b') {
-				if(isReady)
-					System.out.println(s + ": illegal command");
-				else {
-					int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
-					if (bet < minBet || bet > maxBet) {
-						System.out.println(s + ": illegal command");
-						continue;
-					}
-					player.placeBet(bet);
-					for (int i = 0; i < bet_strat.size(); i++)
-						bet_strat.get(i).setBet(bet);
-					System.out.println("player is betting " + bet);
-					isReady = true;			
-					if(mode instanceof Simulation) start_dealing = true;
-				}
-			}else if(toks[0].charAt(0) == 'd') {
-				if(isReady) {
-					start_dealing = true;
-				} else {
-					System.out.println(toks[0] + ": illegal command");
-				}
-			} else if(toks[0].charAt(0) == '$') {
-				System.out.println("Player's current balance is " + player.getBalance());
-			} else if(toks[0].charAt(0) == 't') {
-				DecimalFormat df = new DecimalFormat("#.##");
-				System.out.println("BJ P/D \t" + df.format(pStats.getBJavg())+ " / " + df.format(dStats.getBJavg()));
-				System.out.println("Win  \t" + df.format(((PlayerStats) pStats).getWLPavg(1)));
-				System.out.println("Lose \t" + df.format(((PlayerStats) pStats).getWLPavg(-1)));
-				System.out.println("Push \t" + df.format(((PlayerStats) pStats).getWLPavg(0)));
-				System.out.println("Balance\t" + player.getBalance() + " / " + 
-						df.format(((PlayerStats) pStats).percentageOfGain(player.getBalance())));
-			} else if(toks[0].charAt(0) == 'a') {
-				if(isReady)
-					System.out.println(s + ": illegal command");
-				else {
-					System.out.println("Ace5 \t\tbet " + bet_strat.get(1).getNextBet());
-					System.out.println("Standard Bet\tbet " + bet_strat.get(0).getNextBet());
-				}
-			} else if(toks[0].charAt(0) == 'q') {
-				System.out.println("bye");
-				System.exit(0);				
-			} else
-				System.out.println(s + ": illegal command");
-			
-			if(start_dealing) {
-				deal();
-				isReady = false;
-				start_dealing = false;
-			}
-		}
-	}
 	
-	/** Gets the advice on the play.
-	 * 
-	 * @param cmd Command line.
-	 * @return <stand> Stand.
-	 * @return <insurance> Insurance.
-	 * @return <surrender> Surrender.
-	 * @return <split> Split.
-	 * @return <hit> Hit.
-	 * @return <2> Double.
-	 * @return <Invalid Option> If the option is not valid.
-	 * 
-	 */
-	public String getFullAdvice(String cmd) {
+	private String getFullAdvice(String cmd) {
 		if (cmd.equals("s"))
 			return "stand";
 		else if (cmd.equals("i"))
@@ -249,9 +162,99 @@ public class Game {
 			return "Invalid option";
 	}
 	
-	/** Deals cards to players and dealer
-	 */
-	public void deal() { // for 1 player; try to generalize later
+	private void shuffleState() {
+		if ((mode instanceof Simulation))
+			((Simulation) mode).incCurrSNumber();
+		for (int i = 0; i < bet_strat.size(); i++)
+			bet_strat.get(i).resetCount();
+		if ((game_strat.get(0) instanceof HiLo))
+			((HiLo) game_strat.get(0)).resetCounts();
+		System.out.println("shuffling the shoe...");
+		dealer.shuffle();
+	}
+	
+	private boolean bettingState(int bet) {
+		if (bet < minBet || bet > maxBet) {
+			System.out.println("b " + bet + ": illegal command");
+			return false;
+		}
+		player.placeBet(bet);
+		for (int i = 0; i < bet_strat.size(); i++)
+			bet_strat.get(i).setBet(bet);
+		System.out.println("player is betting " + bet);
+		return true;
+	}
+	
+	private void printStatsState() {
+		DecimalFormat df = new DecimalFormat("#.##");
+		System.out.println("BJ P/D \t" + df.format(pStats.getBJavg())+ " / " + df.format(dStats.getBJavg()));
+		System.out.println("Win  \t" + df.format(((PlayerStats) pStats).getWLPavg(1)));
+		System.out.println("Lose \t" + df.format(((PlayerStats) pStats).getWLPavg(-1)));
+		System.out.println("Push \t" + df.format(((PlayerStats) pStats).getWLPavg(0)));
+		System.out.println("Balance\t" + player.getBalance() + " / " + 
+				df.format(((PlayerStats) pStats).percentageOfGain(player.getBalance())));
+	}
+	
+	public void play() {
+				
+		while(true) {
+			player.clearHands();
+			dealer.clearHand();
+			/* Shuffle if the number of dealt cards surpassed the intShuffle threshold,
+			* unless the program is running on Debug Mode */
+			if(!(mode instanceof Debug) && dealer.shoe.getNDealtCards() >= Math.ceil(intShuffle/100.0f * nDecks * 52)) {
+				shuffling = true;
+			}
+			if(shuffling) {
+				shuffleState();
+				shuffling = false;
+			}
+			/* Gets a command from a source, either the command line, a file or the simulator 
+			 * Valid commands at this stage: b [<value>] and d, in this order;
+			 * isReady flags that a "d" command should be issued; no more "b" commands are accepted.*/
+			String s = mode.getBetCommand();
+			if(s.isBlank()) continue; // Command in a bad format; "\0" was returned;
+			String[] toks = s.split(" ", 0);
+			if(toks[0].charAt(0) == 'b') {
+				if(isReady)
+					System.out.println(s + ": illegal command");
+				else {
+					int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
+					isReady = bettingState(bet);
+					if(mode instanceof Simulation) startRound = true;
+				}
+			}else if(toks[0].charAt(0) == 'd') {
+				if(isReady) {
+					startRound = true;
+				} else {
+					System.out.println(toks[0] + ": illegal command");
+				}
+			} else if(toks[0].charAt(0) == '$') {
+				System.out.println("Player's current balance is " + player.getBalance());
+			} else if(toks[0].charAt(0) == 't') {
+				printStatsState();
+			} else if(toks[0].charAt(0) == 'a') {
+				if(isReady)
+					System.out.println(s + ": illegal command");
+				else {
+					System.out.println("Ace5 \t\tbet " + bet_strat.get(1).getNextBet());
+					System.out.println("Standard Bet\tbet " + bet_strat.get(0).getNextBet());
+				}
+			} else if(toks[0].charAt(0) == 'q') {
+				System.out.println("bye");
+				System.exit(0);				
+			} else
+				System.out.println(s + ": illegal command");
+			
+			if(startRound) {
+				playRound();
+				isReady = false;
+				startRound = false;
+			}
+		}
+	}
+		
+	private void dealState() {
 		for(int i = 0; i < 2; ++i) {
 			Card c = dealer.dealCards();
 			if (i == 0) {
@@ -263,7 +266,7 @@ public class Game {
 			dealer.addCard(c);
 		}
 		dStats.incHandsPlayed();
-		// dealer deals cards to all players
+
 		for(int i = 0; i < 2; ++i) {
 			Card c = dealer.dealCards();
 			for (int j = 0; j < bet_strat.size(); j++)
@@ -273,11 +276,10 @@ public class Game {
 			player.addCard(0, c);
 		}
 		pStats.incHandsPlayed();
+	}
+	
+	private void playersTurn() {
 		
-		dealer.printDealersHand();
-		player.printPlayersHand(-1);
-		
-		// Ciclo para cada player...
 		String line;
 		String hand_index;
 		int print_index;
@@ -323,7 +325,6 @@ public class Game {
 				if(line.isBlank()) continue;
 				char cmd = line.charAt(0);
 				if(cmd == 'h') {
-//					if (player.hands.get(i).isBust() || player.hands.get(i).isStanding() || player.hands.get(i).isSurrender() || (player.hands.get(i).isDouble() && (player.hands.get(i).getNCards() >= 3)) || (player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() >= 2) && (player.hands.get(i).getFirst().getValue().equals("A"))))
 					if ((player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() == 2) && (player.hands.get(i).getFirst().getValue().equals("A"))))
 						System.out.println(line + ": illegal command");
 					else
@@ -365,13 +366,7 @@ public class Game {
 					play = game_strat.get(0).getNextPlay(player.getNHands(), player.hands.get(i), dealer.hand, player.getBet());
 					System.out.println("HiLo\t\t" + getFullAdvice(play));
 				} else if(cmd == 't') { 
-					DecimalFormat df = new DecimalFormat("#.##");
-					System.out.println("BJ P/D \t" + df.format(pStats.getBJavg())+ " / " + df.format(dStats.getBJavg()));
-					System.out.println("Win  \t" + df.format(((PlayerStats) pStats).getWLPavg(1)));
-					System.out.println("Lose \t" + df.format(((PlayerStats) pStats).getWLPavg(-1)));
-					System.out.println("Push \t" + df.format(((PlayerStats) pStats).getWLPavg(0)));
-					System.out.println("Balance\t" + player.getBalance() + " / " + 
-							df.format(((PlayerStats) pStats).percentageOfGain(player.getBalance())));
+					printStatsState();
 				} else if(cmd == '$') {
 					System.out.println("Player's current balance is " + player.getBalance());
 				} else if(cmd == 'q') {
@@ -380,7 +375,7 @@ public class Game {
 				} else
 					System.out.println(line + ": illegal command");					
 		
-				if(player.isHittingHand(i)) { // isto devia ser uma flag do player ou da hand? Se calhar player, mas está na hand
+				if(player.isHittingHand(i)) {
 					if(!player.isDoubleDHand(i)) System.out.println("player hits");
 					Card c = dealer.dealCards();
 					for (int j = 0; j < bet_strat.size(); j++)
@@ -389,7 +384,7 @@ public class Game {
 						((HiLo) game_strat.get(0)).updateCounts(c);
 					player.addCard(i, c);
 					player.printPlayersHand(print_index);
-					player.hands.get(i).setHitting(false); // make this a player method
+					player.hands.get(i).setHitting(false);
 					if(player.hands.get(i).isBust()) {
 						System.out.println("player busts" + hand_index);
 						break;
@@ -421,18 +416,13 @@ public class Game {
 				}
 			}
 		}
-		boolean noHandsLeft = true;
-		for(PlayerHand h : player.hands) {
-			if(h.isStanding()) {
-				noHandsLeft = false;
-				break;
-			}
-		}
-		/** Dealer's turn
-		 */
+	}
+	
+	private void dealersTurn() {
+
 		dealer.setVisible();
 		for (int j = 0; j < bet_strat.size(); j++)
-			bet_strat.get(j).updateCount(dealer.hand.getFirst());
+			bet_strat.get(j).updateCount(dealer.hand.cards.get(1));
 		if(game_strat.get(0) instanceof HiLo)
 			((HiLo) game_strat.get(0)).updateCounts(dealer.hand.getFirst());
 		
@@ -457,6 +447,26 @@ public class Game {
 				break;
 			}
 		}
+	}
+	
+	public void playRound() {
+		
+		dealState();
+		
+		dealer.printDealersHand();
+		player.printPlayersHand(-1);
+		
+		playersTurn();
+		
+		noHandsLeft = true;
+		for(PlayerHand h : player.hands) {
+			if(h.isStanding()) {
+				noHandsLeft = false;
+				break;
+			}
+		}
+
+		dealersTurn();
 		
 		if (dealer.hand.checkBlackjack())
 			System.out.println("blackjack!!");
@@ -466,9 +476,14 @@ public class Game {
 					System.out.println("blackjack!!");
 					break;
 				}
-		if (dealer.hand.checkBlackjack()) dStats.incBlackjacks();
+		
+		resultsState();
+		
+	}
+	
+	private void resultsState() {
 
-			
+		if (dealer.hand.checkBlackjack()) dStats.incBlackjacks();
 		for(int i = 0; i < player.getNHands(); ++i) {
 			if (player.hands.get(i).checkBlackjack()) pStats.incBlackjacks();
 			float mult = 1;
@@ -505,14 +520,13 @@ public class Game {
 				((StandardStrategy) bet_strat.get(0)).updateBet(res);
 			player.updateBalance(mult*bet);
 			
-			hand_index = "";
+			String hand_index = "";
 			if(player.getNHands() > 1)
 				hand_index = " [" + (i+1) + "]";
 			
 			System.out.println("Player " + res_str + hand_index + " and his current balance is " + player.getBalance());
 		}
 		System.out.println();
-		
 	}
 	
 	/** Calculates the results
@@ -521,7 +535,7 @@ public class Game {
 	 * @return 1 - player wins, 0 - player pushes, -1 - player loses
 	 * 
 	 */
-	public int result(int i) { // 1 - player wins, 0 - player pushes, -1 - player loses
+	private int result(int i) { // 1 - player wins, 0 - player pushes, -1 - player loses
 		if(player.hands.get(i).isBust()) return -1;
 		if(dealer.hand.isBust()) return 1;
 		if (player.hands.get(i).checkBlackjack())
@@ -537,105 +551,7 @@ public class Game {
 		else
 			return 0;
 	}
-	
-	/** Main method relative to the Game.
-	 * 
-	 * @param args.
-	 * 
-	 */
-	public static void main(String args[]){
-		char Mode_in = args[0].charAt(1);
-		Game game = null;
-		int min_bet = 0, max_bet = 0, balance = 0;
-		try {
-			min_bet = Integer.parseInt(args[1]);
-			max_bet = Integer.parseInt(args[2]);
-		} catch (NumberFormatException nfe) {
-			System.out.println("Invalid bet args: " + nfe);
-			System.exit(0);
-		}
-		if (min_bet < 1 || (max_bet < 10*min_bet || max_bet > 20*min_bet)) {
-			System.out.println("Invalid bet args");
-			System.exit(0);				
-		}
-		try {
-			balance = Integer.parseInt(args[3]);
-		} catch (NumberFormatException nfe) {
-			System.out.println("Invalid balance: " + nfe);
-			System.exit(0);
-		}
-		if (balance < 50*min_bet) {
-			System.out.println("Invalid balance");
-			System.exit(0);				
-		}
-		if ((Mode_in) == 'i') {
-			int shoe = 0, shuffle = 0;
-			try {
-				shoe = Integer.parseInt(args[4]);
-			} catch (NumberFormatException nfe) {
-				System.out.println("Invalid number of decks: " + nfe);
-				System.exit(0);
-			}
-			if (shoe < 4 || shoe > 8) {
-				System.out.println("Invalid number of decks");
-				System.exit(0);				
-			}
-			try {
-				shuffle = Integer.parseInt(args[5]);
-			} catch (NumberFormatException nfe) {
-				System.out.println("Invalid shuffle parameter: " + nfe);
-				System.exit(0);
-			}
-			if (shuffle < 10 || shuffle > 100) {
-				System.out.println("Invalid shuffle parameter");
-				System.exit(0);				
-			}
-			game = new Game(Mode_in, min_bet, max_bet, balance, shoe, shuffle, -1, null);
-		}
-		else if ((Mode_in) == 'd') {
-			game = new Game(Mode_in, min_bet, max_bet, balance, args[4], args[5]); 
-		}
-		else if ((Mode_in) == 's') {
-			int shoe = 0, shuffle = 0, snumber = 0;
-			try {
-				shoe = Integer.parseInt(args[4]);
-			} catch (NumberFormatException nfe) {
-				System.out.println("Invalid number of decks: " + nfe);
-				System.exit(0);
-			}
-			if (shoe < 4 || shoe > 8) {
-				System.out.println("Invalid number of decks");
-				System.exit(0);				
-			}
-			try {
-				shuffle = Integer.parseInt(args[5]);
-			} catch (NumberFormatException nfe) {
-				System.out.println("Invalid shuffle parameter: " + nfe);
-				System.exit(0);
-			}
-			if (shuffle < 10 || shuffle > 100) {
-				System.out.println("Invalid shuffle parameter");
-				System.exit(0);				
-			}
-			try {
-				snumber = Integer.parseInt(args[6]);
-			} catch (NumberFormatException nfe) {
-				System.out.println("Invalid sNumber parameter: " + nfe);
-				System.exit(0);
-			}
-			if (snumber <= 0) {
-				System.out.println("Invalid sNumber parameter");
-				System.exit(0);				
-			}
-			game = new Game(Mode_in, min_bet, max_bet, balance, shoe, shuffle, snumber, args[7]);
-		}
-		else {
-			System.out.println("Incorrect arguments");
-			System.exit(0);			
-		}
-		
-		game.play();
-	}
-	
 
 }
+
+

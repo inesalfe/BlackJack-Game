@@ -1,8 +1,10 @@
 package blackjack;
 
 /** Class relative to the statistics regarding the blackjack.
- * @param handsPlayed Record of played hands
- * @param blackjacks Tracks blackjacks
+ * 
+ * @param handsPlayed Record of played hands.
+ * @param blackjacks Tracks blackjacks.
+ * 
 */
 public class Stats {
 	
@@ -16,20 +18,22 @@ public class Stats {
 		blackjacks = 0;
 	}
 	
-	/** Calculates the ratio of blackjacks per hand
-	 * @return blackjacks/handsPlayed Ratio
+	/** Calculates the ratio of blackjacks per hand.
+	 * 
+	 * @return blackjacks/handsPlayed Ratio.
+	 * 
 	*/
 	public double getBJavg() {
 		return (double)blackjacks/handsPlayed;
 	}
 	
-	/** Calculates the ratio of blackjacks per hand
+	/** Calculates the ratio of blackjacks per hand.
 	*/
 	public void incHandsPlayed() {
 		++handsPlayed;
 	}
 	
-	/** Updates the number of Blackjacks
+	/** Updates the number of Blackjacks.
 	*/
 	public void incBlackjacks() {
 		++blackjacks;

@@ -83,6 +83,14 @@ public class Hand {
 		return value;
 	}
 	
+	public ArrayList<Card> getCards(){
+		ArrayList<Card> visible_cards = new ArrayList<Card>();
+		for(Card c : cards)
+			if(c.getIsUp())
+				visible_cards.add(c);
+		return visible_cards;
+	}
+	
 	/** Gets number of cards.
 	 * 
 	 * @return Number of cards.

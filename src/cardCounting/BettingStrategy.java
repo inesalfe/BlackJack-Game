@@ -1,4 +1,6 @@
-package blackjack;
+package cardCounting;
+
+import blackjack.Card;
 
 /** Class which refers to the best possible way to calculate the next bet.
  * 

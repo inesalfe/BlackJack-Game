@@ -81,14 +81,14 @@ public class Player {
 	 * 
 	 */
 	public void surrender(int i) {
-		hands.get(i).setIsOpening(false); // Vejam se concordam com esta linha
+		hands.get(i).setIsOpening(false);
 		hands.get(i).setIsSurrender();
 	}
 	
 	/** Performs the insurance action
 	 */
 	public void insurance() {
-		hands.get(0).setIsOpening(false); // Vejam se concordam com esta linha
+		hands.get(0).setIsOpening(false);
 		isInsuring = true;
 		balance -= bet;
 	}

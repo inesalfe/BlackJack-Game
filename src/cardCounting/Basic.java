@@ -1,4 +1,8 @@
-package blackjack;
+package cardCounting;
+
+import blackjack.Card;
+import blackjack.Hand;
+import blackjack.PlayerHand;
 
 /** Class relative to the card and its attributes.
  * 
@@ -36,7 +40,7 @@ public class Basic extends PlayerStrategy {
 			return pairs(p_hand, d_hand.getFirst(), bet);
 		}
 		boolean hard = true;
-		for (Card card: p_hand.cards) {
+		for (Card card: p_hand.getCards()) {
 			if (card.getValue().equals("A") && card.isSoft()) {
 				hard = false;
 				break;
@@ -164,7 +168,7 @@ public class Basic extends PlayerStrategy {
 		}
 		if (canSplit)
 			return "p";
-		else return (p_hand.cards.get(0).getValue().equals("A")) ? "s" : hard(p_hand.getValue(), card, bet);
+		else return (p_hand.getCards().get(0).getValue().equals("A")) ? "s" : hard(p_hand.getValue(), card, bet);
 	}
 	
 //	public static void main(String args[]) {

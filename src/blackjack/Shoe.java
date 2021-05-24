@@ -4,12 +4,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+/** Class that characterizes the shoe
+ * 
+ * @param shoe Represents the shoe
+ * @param nDecks Number of decks.
+ * @param nDealtCards Number of dealt cards.
+ *
+ */
 public class Shoe {
 	
 	private ArrayList<Card> shoe;
 	private int nDecks;
 	private int nDealtCards;
 	
+	/** Creates a complete deck
+	 * 
+	 * @param nDecks_in Number of decks that form a shoe.
+	 * 
+	 */
 	public Shoe(int nDecks_in) {
 		nDecks = nDecks_in;
 		nDealtCards = 0;
@@ -20,6 +32,11 @@ public class Shoe {
 		}
 	}
 	
+	/** Creates a shoe based on the file input
+	 * 
+	 * @param shoeFile_in Name of the file which contains the shoe
+	 * 
+	 */
 	public Shoe(String shoeFile_in) {
 		nDealtCards = 0;
 		shoe = new ArrayList<Card>();
@@ -49,10 +66,16 @@ public class Shoe {
 		nDecks = cards.size()/52;
 	}
 	
+	/** Gets number of decks.
+	 * 
+	 * @return nDecks Number of decks.
+	 */
 	public int getNDecks() {
 		return nDecks;
 	}
 	
+	/** Shuffles the shoe.
+	 */
 	public void shuffle() {
 		Collections.shuffle(shoe);
 		for(Card c : shoe) {
@@ -60,6 +83,11 @@ public class Shoe {
 		}
 	}
 
+	/** Gets the card
+	 * 
+	 * @return card Represents a regular card.
+	 * 
+	 */
 	public Card getCard() {
 		Card card = shoe.get(0);
 		shoe.add(card);
