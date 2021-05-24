@@ -2,31 +2,30 @@ package blackjack;
 
 import java.util.*;
 
-/** Class relative to the Player
- * 
- * @param balance Current balance of the player.
- * @param bet Bet that is set by the player.
- * @param nHands Number of hands (can vary due to split).
- * @param isSplitting Flag that checks if a split was made.
- * @param isInsuring Activates if a player decided to make insurance.
+/** Class that implements a Player
  * 
  */
 public class Player {
-	
+	/**
+	 * Array list of hands: the player may have up to 4 hands */	
 	protected ArrayList<PlayerHand> hands;
-	
+	/**
+	 * Player current balance */
 	private float balance;
-	private int bet; // review: Is it really needed?
+	/**
+	 * Player initial bet */
+	private int bet;
+	/**
+	 * Number of hands */
 	private int nHands;
-	
+	/**
+	 * If a player is splitting a hand */
 	private boolean isSplitting;
+	/**
+	 * If an insurance was made */
 	private boolean isInsuring;
 	
-	/** Initializes the player's actions.
-	 * 
-	 * @param initialBet_in Initial bet going in the game.
-	 * @param balance_in Player's balance.
-	 * 
+	/** Initializes a new player with an initial bet and balance
 	 */
 	public Player(int initialBet_in, int balance_in) {
 		balance = balance_in;
@@ -48,7 +47,7 @@ public class Player {
 	
 	/** Adds a card t the hand.
 	 * 
-	 * @param i Card's index.
+	 * @param i Hand's index.
 	 * @param card Regular card.
 	 * 
 	 */
@@ -67,17 +66,17 @@ public class Player {
 	
 	/** Performs the stand action.
 	 * 
-	 * @param i Card's index.
+	 * @param i Hand's index.
 	 * 
 	 */
 	public void stand(int i) {
-		hands.get(i).setIsOpening(false); // Vejam se concordam com esta linha
+		hands.get(i).setIsOpening(false);
 		hands.get(i).setIsStanding(true);
 	}
 	
 	/** Performs the surrender action.
 	 * 
-	 * @param i Card's index
+	 * @param i Hand's index
 	 * 
 	 */
 	public void surrender(int i) {
@@ -103,12 +102,15 @@ public class Player {
 	}
 	
 	/** Performs the split action.
+	 * <p> 
+	 * Increments the number of hands, removes the previous hand and adds two new ones,
+	 * with one card each (only the splitted cards)
 	 * 
 	 * @param i Index of the card.
 	 * 
 	 */
 	public void split(int i) {
-		hands.get(i).setIsOpening(false); // Vejam se concordam com esta linha
+		hands.get(i).setIsOpening(false);
 		isSplitting = false;
 		nHands++;
 		balance -= bet;
@@ -119,9 +121,10 @@ public class Player {
 		hands.remove(i);
 	}
 	
-	/** Peforms the double down action.
+	/** Peforms the double down action. Also sets isHitting to true since the player can only take one
+	 * more card in this hand.
 	 * 
-	 * @param i Index of the card.
+	 * @param i Index of the hand.
 	 * 
 	 */
 	public void doubleD(int i) {
@@ -133,6 +136,7 @@ public class Player {
 	}
 	
 	/** Places a nwe value for the bet.
+	 *  Deduces it's value from the player's balance
 	 * 
 	 * @param newBet New value for the bet.
 	 * 
@@ -143,7 +147,7 @@ public class Player {
 		hands.get(0).setBet(newBet);
 	}
 	
-	/** Resets the hands
+	/** Removes all hands and adds a new empty one
 	 */
 	public void clearHands() {
 		hands.clear();
@@ -170,8 +174,9 @@ public class Player {
 	}
 	
 	/** Displays the player's hand
-	 * 
-	 * @param i Card's index
+	 * <p> If i is -1 then the player only has one Hand and so the affix
+	 * with the hand number won't show up
+	 * @param i Hand index
 	 */
 	public void printPlayersHand(int i){
 		String out = new String();
@@ -186,10 +191,10 @@ public class Player {
 		System.out.println(out);	
 	}
 
-	/** Checks if the player decided to hit
+	/** Checks if the player decided to hit on hand i
 	 * 
-	 * @param i Card's index
-	 * @return hands.get(i).isHitting Decision to hit
+	 * @param i Hand index
+	 * @return Decision to hit
 	 */
 	public boolean isHittingHand(int i) {
 		return hands.get(i).isHitting();
@@ -197,8 +202,8 @@ public class Player {
 
 	/** Checks if the player decided to stand
 	 * 
-	 * @param i Card's index
-	 * @return hands.get(i).isStanding Decision to stand
+	 * @param i Hand index
+	 * @return Decision to stand
 	 */
 	public boolean isStandingHand(int i) {
 		return hands.get(i).isStanding();
@@ -206,8 +211,8 @@ public class Player {
 
 	/** Checks if the player decided to surrender
 	 * 
-	 * @param i Card's index
-	 * @return hands.get(i).isSurrender Decision to surrender
+	 * @param i Hand index
+	 * @return Decision to surrender
 	 */
 	public boolean isSurrendingHand(int i) {
 		return hands.get(i).isSurrender();

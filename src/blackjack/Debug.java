@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-/** Class relative to the selection of game mode 
+/** 
+ * Class relative to the selection of game mode 
  * 
  * @param cmds List of commands
  * @param cmdFile Name of the file with the commands
@@ -14,6 +15,9 @@ import java.util.Scanner;
  */
 public class Debug implements GameMode {
 
+	/**
+	 * List of readible commands
+	 */
 	ArrayList<String> cmds;
 	String cmdFile;
 	
@@ -51,7 +55,8 @@ public class Debug implements GameMode {
 		}
 	}
 	
-	/** Gets a valid command.
+	/** 
+	 * Gets a valid command.
 	 * 
 	 * @return <h> Hit
 	 * @return <s> Stand

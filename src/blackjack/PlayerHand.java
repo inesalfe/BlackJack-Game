@@ -1,29 +1,30 @@
 package blackjack;
 
 /** Class relative to a usable hand by a player.
- * 
- * @param bet Money used to make the bet for the game.
- * @param isOpening Evaluates if the hand is visible or not.
- * @param isSplit Checks if a split was made during the game.
- * @param isDoubleD Used to check for a Double down bet.
- * @param isPair Activates if both cards in the hand have the same value.
- * @param isSurrender Activates if the player wants to surrender the game.
+ * <p>
+ * Extends a regular Hand
  * 
 */
 public class PlayerHand extends Hand {
-	
+	/** current bet associated with the hand */	
 	private int bet;
+	/** if a hand is an opening hand (hand just dealt) */	
 	private boolean isOpening;
+	/** if a hand is a pair */	
 	private boolean isPair;
+	/** if a hand was doubled */	
 	private boolean isDoubleD;
+	/** if a hand was splitted */	
 	private boolean isSplit;
+	/** if a hand was surrendered */	
 	private boolean isSurrender;
+	/** if a hand is still hitting */	
 	private boolean isHitting;
 	
 	/** Creates a usable Hand for the player.
 	 * 
 	 * @param bet_in Bet that is placed at the beginning.
-	 * @param opening Evaluates if the hand is visible or not.
+	 * @param opening if it is an opening hand
 	 * @param split Checks for a split.
 	 * 
 	*/
@@ -39,7 +40,7 @@ public class PlayerHand extends Hand {
 	
 	/** Gets the value of the bet.
 	 * 
-	 * @return bet Value of the bet.
+	 * @return bet
 	 * 
 	*/
 	public int getBet() {
@@ -68,9 +69,9 @@ public class PlayerHand extends Hand {
 		isSurrender = true;
 	}
 	
-	/** Flag which indicates if the player's hand is open or not.
+	/** Flag which indicates if the player's hand is an opening hand or not.
 	 * 
-	 * @return isOpening State of the hand (open or not).
+	 * @return isOpening
 	 * 
 	*/
 	public boolean isOpening() {
@@ -83,7 +84,7 @@ public class PlayerHand extends Hand {
 		isOpening = bool;
 	}
 	
-	/** Checks if the card in the hand have the same value.
+	/** Checks if the hand is a pair.
 	 * 
 	 * @return isPair Flag which indicates if the cards have the same value.
 	 * 
@@ -125,7 +126,9 @@ public class PlayerHand extends Hand {
 		bet = bet_in;
 	}
 	
-	/** Adds a card to the hand.
+	/** Adds a card to the player's hand and sets flags accordingly
+	 * <p>
+	 * Extends the addCard method from a regular hand
 	 * 
 	 * @param card Represents a regular card.
 	 * 
@@ -153,34 +156,8 @@ public class PlayerHand extends Hand {
 		return out;
 	}
 
-	/** Main method for the Player's Hand
-	 *  
-	 * @param args
-	 */
-	public static void main(String args[]){
-		Card c1 = new Card("A", 'D');
-		Card c2 = new Card("A", 'H');
-		Card c3 = new Card("5", 'C');
-		Card c4 = new Card("6", 'S');
-		Card c5 = new Card("10", 'S');
-		Card c6 = new Card("K", 'D');
-		Card c7 = new Card("2", 'D');
-		PlayerHand h1 = new PlayerHand(10, true, false);
-		PlayerHand h2 = new PlayerHand(10, true, false);
-		PlayerHand h3 = new PlayerHand(10, true, false);
-		h1.addCard(c1);
-		h1.addCard(c2);
-		h2.addCard(c3);
-		h2.addCard(c4);
-		h3.addCard(c5);
-		h3.addCard(c6);
-		h3.addCard(c7);
-		System.out.println(h1.isPair());
-		System.out.println(h2.isPair());
-		System.out.println(h3.isPair());
-	}
 	
-	/** Used to check for hits.
+	/** Checks if the player is hitting
 	 * 
 	 * @return isHitting Flag which indicates if an hit is being made.
 	 * 
@@ -189,7 +166,7 @@ public class PlayerHand extends Hand {
 		return isHitting;
 	}
 	
-	/** Used for hits.
+	/** Sets the hitting state
 	 * 
 	 * @return isHitting Flag which indicates if an hit is being made.
 	 * 

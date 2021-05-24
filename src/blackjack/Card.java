@@ -1,26 +1,42 @@
 package blackjack;
 
-/** Class relative to the card and its attributes.
+/** 
+ * Class that implements a game card
  * 
- * @param suit Represents the suit of the card (spades, clubs, diamonds, hearts).
- * @param intValue Value associated with each number or figure.
- * @param isUp Evaluates if the card is turned up and therefore visible.
- * @param isUp Evaluates if the Ace values 1 or 11 points.
+ * @author Ricardo Santos 90178
+ * @author Tomá Bessa 90200
+ * @author Inês Ferreira 90395
  * 
 */
 public class Card {
-	
-
+	/**
+	* The String value of the card:
+	* <p>
+	* A for an Ace; 
+	* 2 to 10 for the cards with that value; 
+	* J, Q and K to Jack, Queen and King, respectively.
+	*/
 	private String value;
+	/**
+	 * The suit of the card: <p>
+	 * D: Diamonds; C: Clubs; S: Spades; H: Hearts.
+	*/
 	private char suit;
+	/**
+	 * Numeric value of a card:
+	*/
 	private int intValue;
+	/**
+	 * Visibility of a card: {@code true} if the card is visible, {@code false} otherwise
+	*/
 	private boolean isUp;
+	/**
+	 * If an Ace counts as a 11 ({@code true}) or a 1 ({@code false})
+	*/
 	private boolean isSoft;
 	
-	/** Used to create regular cards.
-	 * 
-	 * @param n Index of the card 
-	 * 
+	/** Used to create a card from an integer.
+	 * @param n integer from 0 to 51 
 	*/
 	public Card(int n) {
 		
@@ -79,10 +95,10 @@ public class Card {
 		isSoft = (value.equals("A"));
 	}
 	
-	/** Used to create cards.
+	/** Creates a specific card.
 	 * 
-	 * @param value_in Stores the value.
-	 * @param suit_in Stores the suit for each card.
+	 * @param value_in card String value.
+	 * @param suit_in suit of the card.
 	 * 
 	*/
 	public Card(String value_in, char suit_in) {
@@ -116,9 +132,9 @@ public class Card {
 		return suit;
 	}
 	
-	/** Gets the value which corresponds to each number or figure.
+	/** Gets the numeric value of a card.
 	 *  
-	 * @return intValue Value associated with number or figure.
+	 * @return intValue numeric value.
 	 * 
 	*/
 	public int getIntValue() {
@@ -136,8 +152,7 @@ public class Card {
 	
 	/** Sets a flag isSoft.
 	 * 
-	 * @param flag Verifies the state of the card.
-	 * @return isSoft Flag that determines if the ace value is soft.
+	 * @param flag set value.
 	 * 
 	*/
 	public void setSoft(boolean flag) {
@@ -146,7 +161,7 @@ public class Card {
 	
 	/** Gets the variable isSoft, which determines the value of the Ace.
 	 * 
-	 * @return isUp Evaluates if the card is turned up and therefore visible.
+	 * @return isSoft true if the Ace is worth 11, false if it's worth 1.
 	 * 
 	*/
 	public boolean isSoft() {
@@ -154,9 +169,7 @@ public class Card {
 	} 
 	
 	/** Sets the variable isUp.
-	 * 
-	 * @param visibility Boolean which stores whether or not the card is faced up.
-	 * @return isUp state of the card.
+	 * @param visibility setting value.
 	 * 
 	*/
 	public void setIsUp(boolean visibility) {
@@ -198,28 +211,6 @@ public class Card {
 		if (isUp == true)
 			return value + "" + suit;
 		else return "X";
-	}
-
-	/** Main method.
-	 *  
-	 * @param args.
-	 * 
-	 */
-	public static void main(String args[]){
-		Card c1 = new Card("10", 'D');
-		System.out.println(c1.toString());
-		Card c5 = new Card(12);
-		c5.setIsUp(true);
-		System.out.println(c5.toString());
-		Card c3 = new Card("A", 'C');
-		c3.setIsUp(true);
-		System.out.println(c3.toString());
-		Card c2 = new Card("K", 'H');
-		c2.setIsUp(true);
-		System.out.println(c2.toString());
-		Card c4 = new Card("2", 'S');
-		c4.setIsUp(true);
-		System.out.println(c4.toString());
 	}
 	
 }

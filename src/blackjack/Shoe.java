@@ -4,20 +4,29 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/** Class that characterizes the shoe
+/** 
+ * Class that implements a game shoe
  * 
- * @param shoe Represents the shoe
- * @param nDecks Number of decks.
- * @param nDealtCards Number of dealt cards.
- *
- */
+ * @author Ricardo Santos 90178
+ * @author Tomás Bessa 90200
+ * @author Inês Ferreira 90395
+ * 
+*/
 public class Shoe {
-	
+	/**
+	 * The shoe is an array of cards
+	 */
 	private ArrayList<Card> shoe;
+	/**
+	 * Number of decks in the shoe
+	 */
 	private int nDecks;
+	/**
+	 * Number of cards already dealt since the last shuffle
+	 */
 	private int nDealtCards;
 	
-	/** Creates a complete deck
+	/** Creates a default shoe (unshuffled)
 	 * 
 	 * @param nDecks_in Number of decks that form a shoe.
 	 * 
@@ -33,6 +42,8 @@ public class Shoe {
 	}
 	
 	/** Creates a shoe based on the file input
+	 * <p>
+	 * Exits if an error is detected
 	 * 
 	 * @param shoeFile_in Name of the file which contains the shoe
 	 * 
@@ -75,17 +86,20 @@ public class Shoe {
 	}
 	
 	/** Shuffles the shoe.
+	 * <p>
+	 * Makes the shuffled cards not visible
 	 */
 	public void shuffle() {
 		Collections.shuffle(shoe);
 		for(Card c : shoe) {
 			c.setIsUp(false);
 		}
+		resetNDealtCards();
 	}
 
-	/** Gets the card
+	/** Gets the top card from the shoe and places it ate the end of the shoe
 	 * 
-	 * @return card Represents a regular card.
+	 * @return card card got from the shoe.
 	 * 
 	 */
 	public Card getCard() {
@@ -96,11 +110,15 @@ public class Shoe {
 		return card;
 	}
 	
+	/**
+	 * Gets the number of cards already dealt
+	 * @return number of dealt cards
+	 */
 	public int getNDealtCards() {
 		return nDealtCards;
 	}
 	
-	public void resetNDealtCards() {
+	private void resetNDealtCards() {
 		nDealtCards = 0;
 	}
 	
@@ -113,10 +131,5 @@ public class Shoe {
 		}
 		return out;
 	}
-
-	public static void main(String args[]){
-		Shoe shoe1 = new Shoe("shoe-file.txt");
-		System.out.println(shoe1.toString());
-	}	
 
 }

@@ -21,6 +21,7 @@ public abstract class PlayerStrategy {
 	protected boolean canSurrender;
 	protected boolean canDouble;
 	protected boolean canSplit;
+	protected boolean canInsure;
 	
 	/** Calculates the best strategy
 	 * 

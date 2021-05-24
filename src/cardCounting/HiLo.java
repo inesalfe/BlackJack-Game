@@ -63,10 +63,11 @@ public class HiLo extends PlayerStrategy {
 			canDouble = false;
 		}
 		canSplit = (nHands < 4);
+		canInsure = (p_hand.isOpening());
 		int p_hand_value = p_hand.getValue();
 		int d_card_value = d_hand.getFirst().getIntValue();
 		if(d_hand.getFirst().getValue().equals("A")) 
-			if(true_count >= 3 && ) 
+			if(true_count >= 3 && canInsure) 
 				return "i";
 		if(p_hand_value == 9) {
 			if(d_card_value == 2) {
@@ -102,6 +103,8 @@ public class HiLo extends PlayerStrategy {
 			else return basic_strat.getNextPlay(nHands, p_hand, d_hand, bet);
 		}
 		else if(p_hand_value == 12) {
+			if(p_hand.isPair() && p_hand.getCards().get(0).getValue().equals("A") && !p_hand.isOpening())
+				return basic_strat.getNextPlay(nHands, p_hand, d_hand, bet);
 			if(d_card_value == 2)
 				return (true_count >= 3) ? "s" : "h";
 			else if(d_card_value == 3)

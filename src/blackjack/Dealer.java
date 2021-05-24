@@ -1,74 +1,58 @@
 package blackjack;
 
-/** Class relative to the Dealer.
+/** Class that implements a blackjack Dealer.
  * 
- * @param shoe Stack of decks.
- * @param hand Represents the hand (of the dealer).
+ * @author Ricardo Santos 90178
+ * @author Tomás Bessa 90200
+ * @author Inês Ferreira 90395
  * 
 */
 public class Dealer {
-	
+	/**
+	 * Game shoe
+	 */
 	protected Shoe shoe;
+	/**
+	 * Dealer's current playing hand
+	 */
 	protected Hand hand;
-	
-//	private boolean isStanding;
-	
-	/** Creates a shoe for the dealer.
-	 * 
+		
+	/** Creates a new Dealer with a random shoe and an empty hand.
 	 * @param nDecks_in Number of decks that compose the shoe.
-	 * 
 	*/
 	public Dealer(int nDecks_in) {
 		shoe = new Shoe(nDecks_in);
 		hand = new Hand();
-//		isStanding = false;
 	}
 	
-	/** Creates a shoe same t.
-	 * 
-	 * @param shoeFile_in Represents the shoe going in the game.
-	 * 
+	/** Creates a new Dealer with a shoe read from a file and an empty hand.
+	 * @param shoeFile_in shoe file from which the shoe will be created.
 	*/
 	public Dealer(String shoeFile_in) {
 		shoe = new Shoe(shoeFile_in);
 		hand = new Hand();
 	}
 
-	/** Adds a card to the game.
-	 * 
+	/** Adds a card to the dealer's hand.
 	 * @param card Represents a regular card.
-	 * 
 	*/
 	public void addCard(Card card) {
 		hand.addCard(card);
 	}
-
-//	public boolean hasBlackjack() {
-//		return hand.checkBlackjack();
-//	}
-//
-//	public int getHandValue() {
-//		return hand.getValue();
-//	}
 	
 	/** Shuffles the shoe.
 	*/
 	public void shuffle() {
 		shoe.shuffle();
-		shoe.resetNDealtCards();
 	}
-		
-//	public void stand() {
-//		isStanding = true;
-//	}
-	
-	/** Deals cards from the shoe
+			
+	/** Deals a card from the shoe
 	*/
 	public Card dealCards() {
 		return shoe.getCard();
 	}
 	
-	/** Prints the dealer's hand and therefore making it visible
+	/** Prints the dealer's hand
 	*/
 	public void printDealersHand(){
 		String out = new String();

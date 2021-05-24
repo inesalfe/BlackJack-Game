@@ -3,33 +3,33 @@ package blackjack;
 import java.util.*;
 
 
-/** Class relative to the hand.
- * 
- * @param cards List of cards which compose the hand.
- * @param value Card value.
- * @param nCards Number of cards in the hand.
- * @param isBust Activate if the hand value is superior to 21.
- * @param isStanding Defines if the player decided to stand.
+/** Class that implements a general hand
  * 
 */
 public class Hand {
-	
+	/**
+	 * Cards composing the hand
+	 */
 	protected ArrayList<Card> cards;
-	
+	/**
+	 * total hand value
+	 */
 	protected int value;
+	/**
+	 * number of cards in the hand
+	 */
 	protected int nCards;
+	/**
+	 * flag that signals if an hand has busted (true)
+	 */
 	protected boolean isBust;
+	/**
+	 * flag that signals if an hand stands (true)
+	 */
 	protected boolean isStanding;
 	
-	/** Creates a hand of cards.
-	 * 
-	 * @param cards List of cards which compose the hand.
-	 * @param value Card value.
-	 * @param nCards Number of cards in the hand.
-	 * @param isBust Activate if the hand value is superior to 21.
-	 * @param isStanding Defines if the player decided to stand.
-	 * 
-	*/
+	/** Creates an empty hand of cards.
+	 */
 	public Hand() {
 		cards = new ArrayList<Card>();
 		value = 0;
@@ -48,8 +48,6 @@ public class Hand {
 	}
 	
 	/** Sets the isStanding variable.
-	 * 
-	 * @return A boolean that determines if the player decided to stand.
 	 * 
 	*/
 	public void setIsStanding(boolean bool) {
@@ -83,6 +81,10 @@ public class Hand {
 		return value;
 	}
 	
+	/**
+	 * Gets all the visible cards in the hand 
+	 * @return visible cards in an ArrayList of Cards
+	 */
 	public ArrayList<Card> getCards(){
 		ArrayList<Card> visible_cards = new ArrayList<Card>();
 		for(Card c : cards)
@@ -100,9 +102,11 @@ public class Hand {
 		return nCards;
 	}
 	
-	/** Adds a card.
-	 * 
-	 * @param card Represents a regular card.
+	/** Adds a card to the hand.
+	 * <p>
+	 * Also computes the new value of the hand, if the hand has busted
+	 * and if any Ace is downgraded to hard.
+	 * @param card card to add.
 	 * 
 	*/
 	public void addCard(Card card) {
@@ -137,7 +141,7 @@ public class Hand {
 	
 	/** Gets first card 
 	 * 
-	 * @return cards.get(0) First card
+	 * @return First card of the hand
 	 * 
 	 */
 	public Card getFirst() {
@@ -158,24 +162,6 @@ public class Hand {
 			out += "(" + value + ")";
 		return out;
 	}
-	/** Main method relative to the hand
-	 * 
-	 * @param args
-	 */
-	public static void main(String args[]){
-		Card c1 = new Card("10", 'D');
-		c1.setIsUp(true);
-		Card c2 = new Card("9", 'S');
-		c2.setIsUp(true);
-		Card c3 = new Card("A", 'C');
-		c3.setIsUp(true);
-		Hand h1 = new  Hand();
-		h1.addCard(c1);
-		h1.addCard(c2);
-		h1.addCard(c3);
-		System.out.println(h1.toString());
-	}
 
-	
 }
 

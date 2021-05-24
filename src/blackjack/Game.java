@@ -27,8 +27,11 @@ import cardCounting.StandardStrategy;
 public class Game {
 	
 	private GameMode mode;
-	
+	/**
+	 * Minimum value for the bet
+	 */
 	private int minBet;
+	
 	private int maxBet;
 	private int nDecks;
 	private int intShuffle;
