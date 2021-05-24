@@ -4,23 +4,36 @@ import blackjack.Card;
 import blackjack.Hand;
 import blackjack.PlayerHand;
 
-/** Class relative to the card and its attributes.
- * 
- * @param suit Represents the suit of the card (spades, clubs, diamonds, hearts).
- * @param intValue Value associated with each number or figure.
- * @param isUp Evaluates if the card is turned up and therefore visible.
- * @param isUp Evaluates if the Ace values 1 or 11 points.
- * 
-*/
+/**
+ * Class that implements the Hi-Lo card counting strategy 
+ */
 public class HiLo extends PlayerStrategy {
 
+	/**
+	 * Running counter which updates based on the value of the cards that are dealt */
 	private int running_count;
+	/**
+	 * Result of the division of the running count and the remaining number of decks */
 	private float true_count;
+	/**
+	 * Number of cards that were already dealt */
 	private int dealt_cards;
+	/**
+	 * Number of decks that compose the shoe */
 	private int nDecks;
-
+	/**
+	 * Apply basic strategy for the cases that the Hi-Lo Strategy doens't offer an answer
+	 */
 	private PlayerStrategy basic_strat;
 	
+	/** 
+	 * Implements the Hi-Lo counting strategy
+	 * 
+	 * @param max_bet_in Maximum value that can be assigned to a bet
+	 * @param DDmin_in Minimum value for which a player can double down on their bet
+	 * @param DDmax_in Maximum value for which a player can double down on their bet
+	 * @param nDecks_in Number of decks that constitute the shoe
+	 */
 	public HiLo (int max_bet_in, int DDmin_in, int DDmax_in, int nDecks_in) {
 		super(max_bet_in, DDmin_in, DDmax_in);
 		running_count = 0;
@@ -30,9 +43,17 @@ public class HiLo extends PlayerStrategy {
 		basic_strat = new Basic(max_bet, DDmin, DDmax);
 	}
 	
-	/** Updates the auxiliary variable count.
-	 * 
-	 * @return card Represents a regular card.
+	/** Updates the auxiliary variable count, according to the predefined table of values of the Hi-Lo 
+	 * Strategy: <p>
+	 * if the card is an Ace or has a numeric value of 10, decrement the running counter by one unit;
+	 * <p>
+	 * if the card has a numeric value smaller than or equal to 6, increment the counter by one unit;
+	 * <p>
+	 * otherwise, the counter remains the same.
+	 * <p>
+	 * The running counter is then divided by the  number of decks still left to play in order to get the true counter. 
+	 * This will be the one used to make the Hi-Lo decisions
+	 * @param card based on which the update will be made
 	 * 
 	*/
 	public void updateCounts(Card card) {
@@ -46,8 +67,8 @@ public class HiLo extends PlayerStrategy {
 		true_count = Math.round((float)running_count/decks_left);
 	}
 	
-	// Talvez meter o is pair na player hand
-	/** Gets next advisable play.
+	/** Gets next advisable play, according to the Hi-Lo Strategy's Illustrious 18 and Fab 4 variations,
+	 *  complemented with the basic Strategy.
 	 * 
 	 * @param nHands Number of hands
 	 * @param p_hand Player's hand
@@ -158,16 +179,12 @@ public class HiLo extends PlayerStrategy {
 		else return basic_strat.getNextPlay(nHands, p_hand, d_hand, bet);	
 	}
 	
-	/** Resets the auxiliar counter
+	/** Resets the auxiliary counters
 	*/
 	public void resetCounts() {
 		dealt_cards = 0;
 		running_count = 0;
 		true_count = 0;
 	}
-	
-//	public static void main(String args[]) {
-//		PlayerStrategy inter = new HL();
-//	}
 	
 }

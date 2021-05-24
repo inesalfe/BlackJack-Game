@@ -2,11 +2,8 @@ package cardCounting;
 
 import blackjack.Card;
 
-/** Creates hands of cards.
- * 
- * @param min_bet_in Represents the minimum value for the bet.
- * @param max_bet_in Represents the maximum value for the bet.
- * @param count updates the counting based on the value of cards.
+/** Ace 5 betting strategy.
+ * <p> Extends the betting strategy superclass
  * 
 */
 public class Ace5 extends BettingStrategy {
@@ -15,16 +12,18 @@ public class Ace5 extends BettingStrategy {
 	 * 
 	 * @param min_bet_in Represents the minimum value for the bet.
 	 * @param max_bet_in Represents the maximum value for the bet.
-	 * 
+	 * <p>
+	 * (same parameters as the super class, BettingStrategy)
 	*/
-	
 	public Ace5(int min_bet_in, int max_bet_in) {
 		super(min_bet_in, max_bet_in);
 	}
 		
 	/** Updates the counting variable based on a card
+	 * <p> If the card is an Ace, subtract one to the count;
+	 * <p> If the card is a Five, add one to the count.
 	 * 
-	 * @param card Represents the present card.
+	 * @param card Represents the card.
 	 * 
 	*/
 	public void updateCount(Card card) {
@@ -36,9 +35,8 @@ public class Ace5 extends BettingStrategy {
 	
 	/** Calculates the next bet that should be made based on the count.
 	 * 
-	 * @param curr_bet Current bet in place.
-	 * @return min_bet Minimum bet if the count does not obey the condition.
-	 * @return curr_bet Updates the current bet in place.
+	 * If the count is greater or equal to 2, then the bet is doubled (up to the maximum bet).
+	 * Otherwise, the bet is set its minimum value
 	 *
 	*/
 	public int getNextBet() {

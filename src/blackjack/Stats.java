@@ -1,13 +1,17 @@
 package blackjack;
 
-/** Class relative to the statistics regarding the blackjack.
- * 
- * @param handsPlayed Record of played hands.
- * @param blackjacks Tracks blackjacks.
+/** Class that implements the general statistics for a blackjack player (both dealer and actual player)
+ * <p>
+ * Stores information used by both game members when computing their Statistics: number of hands played and
+ * number of blackjacks achieved.
+ * <p>
+ * It is also responsible for updating said information and computing the blackjacks ratios.
+ * <p>
+ * Is extended by the PlayerStats class
  * 
 */
 public class Stats {
-	
+
 	protected int handsPlayed;
 	protected int blackjacks;
 

@@ -4,24 +4,22 @@ import blackjack.Card;
 import blackjack.Hand;
 import blackjack.PlayerHand;
 
-/** Class relative to the card and its attributes.
- * 
- * @param max_bet Maximum value for the bet. 
- * @param DDmin Minimum value for a Double Down.
- * @param DDmax Maximum value for a Double Down.
- * @param canSurrender Evaluates if it is still possible to surrender in the game.
- * @param canDouble Evaluates if it is still possible to double down in the game.
- * 
-*/
+/**
+ * Class that implements the Basic card counting strategy 
+ */
 public class Basic extends PlayerStrategy {
 	
 	public Basic (int max_bet_in, int DDmin_in, int DDmax_in) {
 		super(max_bet_in, DDmin_in, DDmax_in);
 	}
 	
-	
-	// Talvez meter o is pair na player hand
-	/** Calculates the next play
+	/** Calculates the next play according to the basic Strategy tables.
+	 * <p> The Basic Strategy tables are divided into 3 situations:
+	 * <p> 	- the opening hand is a pair;
+	 * <p> 	- there are no Aces or all the aces in the hand value 1: hard hand	 
+	 * <p> 	- there is at least one Ace in the hand that values 11: soft hand
+	 * <p>
+	 * For every of these cases, there's a method called by the getNextPlay method, that gets the advisable play.
 	* 
 	* @param p_hand Represents the player's hand.
 	* @param d_hand Represents the dealer's hand.
@@ -29,8 +27,11 @@ public class Basic extends PlayerStrategy {
 	* 
 	*/
 	public String getNextPlay(int nHands, PlayerHand p_hand, Hand d_hand, int bet) {
+		/* If the player can surrender at that point */
 		canSurrender = true;
+		/* If the player can split at that point considering it can't have more than 4 hands*/
 		canSplit = (nHands < 4);
+		/* If it is possible to double */
 		canDouble = ((p_hand.getValue() >= DDmin && p_hand.getValue() <= DDmax) && (2*bet <= max_bet));
 		if(p_hand.getNCards() != 2 ) {
 			canSurrender = false;
@@ -52,16 +53,12 @@ public class Basic extends PlayerStrategy {
 			return soft(p_hand.getValue(), d_hand.getFirst().getIntValue(), bet);		
 	}
 
-	/** Calculates action when the value of the ace is 1.
+	/** Calculates the action when the hand is hard
 	 * 
 	 * @param p_hand_value Total value assigned to the player's hand.
 	 * @param d_card Represents a dealer's card.
 	 * @param bet Represents the bet.
-	 * @return <h> Hit.
-	 * @return <s> Stand.
-	 * @return <2> Double the bet.
-	 * @return <u> Surrender
-	 * 
+	 * @return best course of action according the Basic Strategy
 	 */
 	public String hard(int p_hand_value, Card d_card, int bet) {
 		int d_card_value = d_card.getIntValue();
@@ -95,16 +92,12 @@ public class Basic extends PlayerStrategy {
 		return "h";
 	}
 	
-	/** Calculates action when the value of the ace is 11
+	/** Calculates the action when the hand is soft
 	 * 
 	 * @param p_hand_value Total value assigned to the player's hand
 	 * @param d_card Represents a dealer's card
 	 * @param bet Represents the bet
-	 * @return <h> Hit
-	 * @return <s> Stand
-	 * @return <2> Double the bet
-	 * @return <u>
-	 * 
+	 * @return best course of action according the Basic Strategy 
 	 */
 	public String soft(int p_hand_value, int d_card_value, int bet) {
 		if ((p_hand_value >= 13 && p_hand_value <= 17) && (d_card_value >= 7 && d_card_value <= 11))
@@ -132,16 +125,12 @@ public class Basic extends PlayerStrategy {
 		return "h";
 	}
 
-	/** Checks for a possible pair of cards and then calculates the next action accordingly.
+	/** Calculates the action when the hand is a pair
 	 * 
-	 * @param p_hand_value Total value assigned to the player's hand.
+	 * @param p_hand_value Total value assigned to the player's hand
 	 * @param d_card Represents a dealer's card
-	 * @param bet Represents the value of the bet.
-	 * @return h Hit.
-	 * @return s Stand.
-	 * @return 2 Double the bet.
-	 * @return p Split.
-	 * 
+	 * @param bet Represents the bet
+	 * @return best course of action according the Basic Strategy 
 	 */
 	public String pairs(PlayerHand p_hand, Card card, int bet) {
 		int d_card_value = card.getIntValue();
@@ -168,12 +157,11 @@ public class Basic extends PlayerStrategy {
 		}
 		if (canSplit)
 			return "p";
+		// Case in which the player can´t split any more (maximum number of hands attained).
+		// If the pair is of Aces, the only action left to do is to stand. Otherwise, Basic strategy 
+		// (hard variation, since this hand won't have any aces) should be applied again. 
+		// be used to determine the best course of action
 		else return (p_hand.getCards().get(0).getValue().equals("A")) ? "s" : hard(p_hand.getValue(), card, bet);
 	}
-	
-//	public static void main(String args[]) {
-//		PlayerStrategy basic_strat = new Basic(10, 9, 11);
-//		
-//	}
-	
+		
 }

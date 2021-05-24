@@ -2,11 +2,10 @@ package blackjack;
 
 
 /** Class destined to saving the player statics regarding several games.
- * 
- * @param wins Number of wins. 
- * @param losses Number of losses.
- * @param pushes Number of pushes. 
- * @param initBalance Initial balance.
+ * <p> Extends the Stats class, as it also implements some other metrics such as 
+ * Win/Lose/Push ratios and balance variation from the initial balance. 
+ * <p> These are the metrics specific to the player, while the ones on the superclass are common 
+ * to both the dealer and the player.
  * 
 */
 public class PlayerStats extends Stats {
@@ -15,9 +14,9 @@ public class PlayerStats extends Stats {
 	private int pushes;
 	private int initBalance;
 
-	/** Assigns values to the stats
+	/** Initializes a new Player Statistics
 	 * 
-	 * @param initbalance Stores the value for the initial balance of the player.
+	 * @param init_balance Stores the value for the initial balance of the player, for later comparison
 	 * 
 	*/
 	public PlayerStats(int init_balance) {
@@ -28,9 +27,12 @@ public class PlayerStats extends Stats {
 		pushes = 0;
 	}
 	
-	/** Class destined to saving the player statics regarding several games.
+	/** Increments the win, loss and push counts, according to a flag.
 	 * 
-	 * @param r Used to update the status regarding the records.
+	 * @param r flag that signals the game result: 
+	 * <p> 1 - player wins
+	 * <p> 0 - player pushes
+	 * <p> -1 - player loses
 	 * 
 	*/
 	public void incWLP(int r) {
@@ -39,9 +41,12 @@ public class PlayerStats extends Stats {
 		if(r == 0) ++pushes;
 	}
 
-	/** Tracks the record of the player.
+	/** Returns one of the metrics computed, according to a flag
 	 * 
-	 * @param r Used to update the status regarding the records.
+	* @param r flag that signals the game result: 
+	 * <p> 1 - player winning rate
+	 * <p> 0 - player pushing rate
+	 * <p> -1 - player losing rate
 	 * 
 	*/
 	public double getWLPavg(int r) {
@@ -53,7 +58,7 @@ public class PlayerStats extends Stats {
 	
 	/** Calculates the percentage gain based on the initial balance and current balance.
 	 * 
-	 * @param cur_balance Current balance which indicates the available money.
+	 * @param cur_balance Current balance which indicates the available money at the moment.
 	 * 
 	*/
 	public double percentageOfGain(double cur_balance) {

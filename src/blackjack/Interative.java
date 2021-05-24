@@ -2,34 +2,28 @@ package blackjack;
 
 import java.util.Scanner;
 
-/** Class relative to the selection of the interactive game mode
- * 
- * @param kb Selection of game mode
- * 
+/** 
+ * Class that gets the commands when in Interactive mode <p>
+ * Implements the GameMode Interface 
  */
 public class Interative implements GameMode {
 
+	/**
+	 * Scanner variable to read data from the console
+	 */
 	private static Scanner kb;
 	
+	/**
+	 * Creates a new Scanner to read from the console
+	 */
 	public Interative () {
 		kb = new Scanner(System.in);
 	}
 	
-	/** Gets the playable command
-	 * 
-	 * @return <h> Hit
-	 * @return <s> Stand
-	 * @return <d> Deal
-	 * @return <i> Insurance
-	 * @return <b> Bet
-	 * @return <u> Surrender
-	 * @return <p> Split
-	 * @return <2> Double
-	 * @return <ad> advice
-	 * @return <st> statistics
-	 * @return <$> Balance
-	 * @return <q> Quit
-	 * 
+	/** Gets a command from the console line
+	 * <p>
+	 * Checks if the command is valid and well formatted. If not, prints and error message and returns an empty String
+	 * @return Command identifier for well formatted commands, otherwise an empty string
 	 */
 	@Override
 	public String getPlayCommand() {
@@ -88,23 +82,18 @@ public class Interative implements GameMode {
 	    return true;
 	}
 
-	/** Gets valid command relative to bet
+	/** The same as in getPlayCommand(): for the interactive mode both commands come from the same place (console)
 	 */
 	@Override
 	public String getBetCommand() {
 		return getPlayCommand();
 	}
 
-	/** Gets valid playable command
+	/** The same as in getPlayCommand(): this version of the method is only called when the caller class is of type Simulation
 	 */
 	@Override
 	public String getPlayCommand(int nHands, PlayerHand p_hand, Hand d_hand, int bet) {
 		return getPlayCommand();
 	}
-	
-//	public static void main(String args[]) {
-//		GameMode inter = new Interative();
-//		System.out.println(inter.getPlayCommand());
-//	}
-	
+		
 }

@@ -7,22 +7,25 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /** 
- * Class relative to the selection of game mode 
- * 
- * @param cmds List of commands
- * @param cmdFile Name of the file with the commands
- * 
+ * Class that gets the commands when in Debug mode <p>
+ * Implements the GameMode Interface 
  */
 public class Debug implements GameMode {
 
 	/**
-	 * List of readible commands
+	 * List of readable commands
 	 */
 	ArrayList<String> cmds;
+	/**
+	 * File with all the commands
+	 */
 	String cmdFile;
 	
 	
-	/** Debug Mode.
+	/** Debug Mode. Reads all the commands from the cmdFile and places them in an ArrayList of Strings
+	 * <p>
+	 * Separates the commands correctly, and joins commands that should be together, like b [bet value]. 
+	 * Also checks if the bet value is an integer.
 	 * 
 	 * @param cmdFile_in Name of the file with the commands.
 	 * 
@@ -56,21 +59,9 @@ public class Debug implements GameMode {
 	}
 	
 	/** 
-	 * Gets a valid command.
-	 * 
-	 * @return <h> Hit
-	 * @return <s> Stand
-	 * @return <d> Deal
-	 * @return <i> Insurance
-	 * @return <b> Bet
-	 * @return <u> Surrender
-	 * @return <p> Split
-	 * @return <2> Double
-	 * @return <ad> advice
-	 * @return <st> statistics
-	 * @return <$> Balance
-	 * @return <q> Quit
-	 * 
+	 * Gets a valid command from the previously computed list of commands.
+	 * <p>
+	 * If the command isn't recognize, prints an error message and returns an empty string
 	*/
 	@Override
 	public String getPlayCommand() {
@@ -112,9 +103,9 @@ public class Debug implements GameMode {
 	}
 
 	
-	/** Converts to string
+	/** Converts all the commands to a string (testing only).
 	 * 
-	 * @return out Resulting String
+	 * @return Resulting String with all the commands
 	 * 
 	 */
 	@Override
@@ -127,11 +118,11 @@ public class Debug implements GameMode {
 		return out;
 	}
 
-	/** Evaluates a string and checks for a number
+	/** Checks if a String is a number (useful to check the betting value).
 	 * 
 	 * @param strNum String 
-	 * @return true If the string contains a number
-	 * @return false If the string does not contain a number
+	 * @return true If it is an integer
+	 * @return false otherwise
 	 */
 	public static boolean isNumeric(String strNum) {
 	    if (strNum == null) {
@@ -145,27 +136,17 @@ public class Debug implements GameMode {
 	    return true;
 	}
 	
-	/** Gets Commands relative to the bet
+	/** Same as in {@link getPlayCommand}
 	 */
 	@Override
 	public String getBetCommand() {
 		return getPlayCommand();
 	}
 
-	/** Gets commands relative to play
-	 * 
-	 * @param p_hand Player's hand
-	 * @param d_hand Dealer's hand
-	 * @param bet Value of the bet
-	 * 
+	/** Same as in {@link getPlayCommand}
 	 */
 	@Override
 	public String getPlayCommand(int nHands, PlayerHand p_hand, Hand d_hand, int bet) {
 		return getPlayCommand();
 	}
-	
-//	public static void main(String args[]){
-//		GameMode debug = new Debug("cmd-file.txt");
-//		System.out.println(debug);
-//	}	
 }
