@@ -11,70 +11,96 @@ import cardCounting.PlayerStrategy;
 import cardCounting.StandardStrategy;
 
 
-/** Class relative to the game.
- * 
- * @param minBet Minimum value for the bet.
- * @param maxBet Maximum value for the bet.
- * @param nDecks Number of decks.
- * @param intShuffle Percentage of the shoe that has been played with.
- * @param isReady Flag that checks if everything is set.
- * @param shuffling Flag that checks if the deck is being shuffled.
- * @param player Represents a regular player.
- * @param dealer Represents the dealer.
- * @param bet_strat Defines the betting strategy.
- * 
+/** Class that implements a blackjack game
+ * <p> Is responsible for creating all the objects that will  in a game: 
+ * both the dealer (which will have a shoe) and the player, the Statistics objects 
+ * (for the player and the dealer), the GameMode object, which will get the commands 
+ * according to the mode that is being played, and the Betting and Playing card counting
+ * strategies.  
+ * <p> All the objects needed while running the program in whichever mode are created and initialized
+ * at the beginning, in the constructor of this class.
 */
 public class Game {
 	
+	/** Object that will get the game commands according to the game mode 
+	 * (actual mode specified at run time). */
 	private GameMode mode;
-	/**
-	 * Minimum value for the bet
-	 */
+	/** Minimum value for the bet */
 	private int minBet;
-	
+	/** Maximum value for the bet */	
 	private int maxBet;
+	/** Number of decks in the shoe 
+	 * (needed for the debug mode, where the number of decks is computed while reading the shoe file
+	 * and returned by the shoe object. It will be needed later in other objects) */	
 	private int nDecks;
+	/** Percentage of the shoe that needs to be played before there's a shuffle */	
 	private int intShuffle;
-
+	/** Signals if a deal ("d") command can be issued (the bet "b" was already placed) */	
 	private boolean isReady = false;
+	/** Signals if a round is about to start ({@code true}) */	
 	private boolean startRound = false;
+	/** {@code true} when the deck is to be shuffled. Defaults to {@code true} at the Game constructor 
+	 * for the simulation and interactive modes (shuffle at the beggining) and is always {@code false}
+	 * for the debug mode */	
 	private boolean shuffling;
+	/** Flag so that the dealer knows if there are still any hands in play before it's turn, that is, 
+	 * if any of the player's hands hasn't busted or surrendered (or, in other words, if there is any 
+	 * hand that stands). If there aren't any hands at play before the dealers turn, he will only flip 
+	 * its hole card and automatically stand, since he already won to all players' hands. */	
 	private boolean noHandsLeft;
-	
+	/** In Simulation mode the commands and its results aren't supposed to be printed to the console */	
+	private boolean printFlag;
+	/** Game player */	
 	private Player player;
+	/** Game dealer */	
 	private Dealer dealer;
-	
+	/** dealer Statistics */	
 	private Stats dStats;
+	/** player Statistics (object will be created with type PlayerStats) */	
 	private Stats pStats;
-	
+	/** Available betting strategies. Can be 1 or more (in the case of this version, 
+	 * 1 or 2, but more betting strategies could be added).
+	 * <p> For simplicity, the position 0 will always be the Standard betting Strategy, when available. */
 	private ArrayList<BettingStrategy> bet_strat;
+	/** Available playing strategies. Can be 1 or more (in the case of this version, 
+	 * 1 or 2, but more playing strategies could be added).
+	 * <p> For simplicity, the position 0 will always be the Hi-Lo playing Strategy, when available. */
 	protected ArrayList<PlayerStrategy> game_strat;
 	
-	/** Interactive && Simulation Modes.
+	/** Constructor for the Interactive and Simulation Modes.
 	 * 
-	 * @param Mode_in Selection of the simulation/strategy mode.
+	 * @param Mode_in Selection of the simulation/interactive mode.
 	 * @param minBet_in Minimum value for the bet that is allowed.
 	 * @param maxBet_in Maximum value for the bet that is allowed.
-	 * @param balance_in Current balance.
+	 * @param balance_in Starting player balance.
 	 * @param nDecks_in Number of decks in the shoe.
-	 * @param intShuffle_in Percentage of the shoe that has been played with.
-	 * @param sNumber_in Number of shuffles until the end of the simulation.
-	 * @param strategy_in Represents the strategy that will be used.
-	 * 
+	 * @param intShuffle_in Percentage of the shoe that has to be played before shuffling.
+	 * @param sNumber_in Number of shuffles until the end of the simulation (when in simulation mode).
+	 * @param strategy_in Represents the strategy that will be used (when in simulation mode).
+	 * <p>
+	 * When in interactive, both of the betting and playing strategies are applied, since when an advice (ad)
+	 * command is issued, we're supposed to get information for all the available card counting strategies.
+	 * <p>
+	 * When in simulation mode only on combination betting + playing strategy is created 
 	 */
 	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, int nDecks_in, int intShuffle_in, int sNumber_in, String strategy_in) {
-		if (Mode_in == 'i') {
+		if (Mode_in == 'i') { // Interactive mode
+			printFlag = true; // prints can be done
 			mode = new Interative();
+			/* Both playing strategies */
 			game_strat = new ArrayList<PlayerStrategy>();
 			game_strat.add(new HiLo(maxBet_in, 9, 11, nDecks_in));
 			game_strat.add(new Basic(maxBet_in, 9, 11)); 
+			/* Both betting strategies */
 			bet_strat = new ArrayList<BettingStrategy>();
 			bet_strat.add(new StandardStrategy(minBet_in, maxBet_in));
 			bet_strat.add(new Ace5(minBet_in, maxBet_in));
 		}
-		else {
+		else { // Simulation mode
+			printFlag = false; // no prints can be done (except the statistics in the end)
 			game_strat = new ArrayList<PlayerStrategy>();
 			bet_strat = new ArrayList<BettingStrategy>();
+			/* Only one betting and playing strategies, depending on the received arguments */
 			if (strategy_in.equals("BS")) {
 				game_strat.add(new Basic(maxBet_in, 9, 11));
 				bet_strat.add(new StandardStrategy(minBet_in, maxBet_in));
@@ -97,6 +123,8 @@ public class Game {
 			}
 			mode = new Simulation(sNumber_in, game_strat.get(0), bet_strat.get(0));
 		}
+		/* In both cases, flags are set in a similar way, and both player and dealer, as well as their statistics
+		 * are instantiated */
 		minBet = minBet_in;
 		maxBet = maxBet_in;
 		nDecks = nDecks_in;
@@ -112,17 +140,20 @@ public class Game {
 		
 	}
 
-	/** Debug Mode.
+	/** Constructor for the Debug Mode.
 	 * 
-	 * @param Mode_in Selection of the simulation/strategy mode.
+	 * @param Mode_in Debug mode.
 	 * @param minBet_in Minimum value for the bet that is allowed.
 	 * @param maxBet_in Maximum value for the bet that is allowed.
 	 * @param balance_in Current balance.
-	 * @param shoeFile_in Shoe going in the game.
-	 * @param cmdFile_in Name of the file with the commands.
-	 * 
+	 * @param shoeFile_in File with the shoe going in the game.
+	 * @param cmdFile_in Name of the file with the commands to be issued.
+	 * <p>
+	 * In Debug mode both betting and playing strategies are applied, since the advice command ("ad")
+	 * can still be issued. 
 	 */
 	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, String shoeFile_in, String cmdFile_in) {
+		printFlag = true;
 		mode = new Debug(cmdFile_in);
 		
 		minBet = minBet_in;
@@ -139,8 +170,8 @@ public class Game {
 		nDecks = dealer.shoe.getNDecks();
 				
 		game_strat = new ArrayList<PlayerStrategy>();
-		game_strat.add(new Basic(maxBet_in, 9, 11));
 		game_strat.add(new HiLo(maxBet_in, 9, 11, nDecks));
+		game_strat.add(new Basic(maxBet_in, 9, 11));
 		bet_strat = new ArrayList<BettingStrategy>();
 		bet_strat.add(new StandardStrategy(minBet, maxBet));
 		bet_strat.add(new Ace5(minBet, maxBet));
@@ -172,19 +203,22 @@ public class Game {
 			bet_strat.get(i).resetCount();
 		if ((game_strat.get(0) instanceof HiLo))
 			((HiLo) game_strat.get(0)).resetCounts();
-		System.out.println("shuffling the shoe...");
+		if (printFlag)
+			System.out.println("shuffling the shoe...");
 		dealer.shuffle();
 	}
 	
 	private boolean bettingState(int bet) {
 		if (bet < minBet || bet > maxBet) {
-			System.out.println("b " + bet + ": illegal command");
+			if (printFlag)
+				System.out.println("b " + bet + ": illegal command");
 			return false;
 		}
 		player.placeBet(bet);
 		for (int i = 0; i < bet_strat.size(); i++)
 			bet_strat.get(i).setBet(bet);
-		System.out.println("player is betting " + bet);
+		if (printFlag)
+			System.out.println("player is betting " + bet);
 		return true;
 	}
 	
@@ -219,8 +253,10 @@ public class Game {
 			if(s.isBlank()) continue; // Command in a bad format; "\0" was returned;
 			String[] toks = s.split(" ", 0);
 			if(toks[0].charAt(0) == 'b') {
-				if(isReady)
-					System.out.println(s + ": illegal command");
+				if(isReady) {
+					if (printFlag)
+						System.out.println(s + ": illegal command");
+				}
 				else {
 					int bet = (toks.length == 1) ? minBet : Integer.parseInt(toks[1]);
 					isReady = bettingState(bet);
@@ -230,24 +266,35 @@ public class Game {
 				if(isReady) {
 					startRound = true;
 				} else {
-					System.out.println(toks[0] + ": illegal command");
+					if (printFlag)
+						System.out.println(toks[0] + ": illegal command");
 				}
 			} else if(toks[0].charAt(0) == '$') {
-				System.out.println("Player's current balance is " + player.getBalance());
+				if (printFlag)
+					System.out.println("Player's current balance is " + player.getBalance());
 			} else if(toks[0].charAt(0) == 't') {
 				printStatsState();
 			} else if(toks[0].charAt(0) == 'a') {
-				if(isReady)
-					System.out.println(s + ": illegal command");
+				if(isReady) {
+					if (printFlag)
+						System.out.println(s + ": illegal command");
+				}
 				else {
-					System.out.println("Ace5 \t\tbet " + bet_strat.get(1).getNextBet());
-					System.out.println("Standard Bet\tbet " + bet_strat.get(0).getNextBet());
+					if (printFlag) {
+						System.out.println("Ace5 \t\tbet " + bet_strat.get(1).getNextBet());
+						System.out.println("Standard Bet\tbet " + bet_strat.get(0).getNextBet());
+					}
 				}
 			} else if(toks[0].charAt(0) == 'q') {
-				System.out.println("bye");
+				if (printFlag)
+					System.out.println("bye");
+				else
+					printStatsState();
 				System.exit(0);				
-			} else
-				System.out.println(s + ": illegal command");
+			} else {
+				if (printFlag)
+					System.out.println(s + ": illegal command");
+			}
 			
 			if(startRound) {
 				playRound();
@@ -269,7 +316,6 @@ public class Game {
 			dealer.addCard(c);
 		}
 		dStats.incHandsPlayed();
-
 		for(int i = 0; i < 2; ++i) {
 			Card c = dealer.dealCards();
 			for (int j = 0; j < bet_strat.size(); j++)
@@ -305,15 +351,17 @@ public class Game {
 			if(player.getNHands() > 1) {
 				print_index = i;
 				hand_index =  " [" + (i+1) + "] ";
-				if (i == 0)
-					System.out.println("playing 1st hand...");
-				else if (i == 1)
-					System.out.println("playing 2nd hand...");
-				else if (i == 2)
-					System.out.println("playing 3rd hand...");
-				else
-					System.out.println("playing 4th hand...");
-				player.printPlayersHand(print_index);
+				if (printFlag) {
+					if (i == 0)
+						System.out.println("playing 1st hand...");
+					else if (i == 1)
+						System.out.println("playing 2nd hand...");
+					else if (i == 2)
+						System.out.println("playing 3rd hand...");
+					else
+						System.out.println("playing 4th hand...");
+					player.printPlayersHand(print_index);
+				}
 			}
 			
 			if(player.isStandingHand(i)) {
@@ -328,8 +376,10 @@ public class Game {
 				if(line.isBlank()) continue;
 				char cmd = line.charAt(0);
 				if(cmd == 'h') {
-					if ((player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() == 2) && (player.hands.get(i).getFirst().getValue().equals("A"))))
-						System.out.println(line + ": illegal command");
+					if ((player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() == 2) && (player.hands.get(i).getFirst().getValue().equals("A")))) {
+						if (printFlag)
+							System.out.println(line + ": illegal command");
+					}
 					else
 						player.hit(i);
 				}
@@ -340,56 +390,76 @@ public class Game {
 					if (player.hands.get(i).isOpening() && dealer.hand.getFirst().getValue().equals("A") &&
 							!player.isInsuring()) {
 						player.insurance();
-						System.out.println("player is insuring");
+						if (printFlag)
+							System.out.println("player is insuring");
 					}
-					else
-						System.out.println(line + ": illegal command");
+					else {
+						if (printFlag)
+							System.out.println(line + ": illegal command");
+					}
 				}
 				else if(cmd == 'u') {
 					if (player.hands.get(i).getNCards()==2)
 						player.surrender(i);
-					else
-						System.out.println(line + ": illegal command");
+					else {
+						if (printFlag)
+							System.out.println(line + ": illegal command");
+					}
 				}
 				else if(cmd == 'p') {
 					if (player.hands.get(i).isPair() && (player.getNHands() <= 3))
 						player.setIsSplitting(true);
-					else
-						System.out.println(line + ": illegal command");
+					else {
+						if (printFlag)
+							System.out.println(line + ": illegal command");
+					}
 				}
 				else if(cmd == '2') {
 					if (player.hands.get(i).getNCards() == 2 && player.hands.get(i).getValue()>8 && player.hands.get(i).getValue()<12)
 						player.doubleD(i);
-					else
-						System.out.println(line + ": illegal command");					
+					else {
+						if (printFlag)
+							System.out.println(line + ": illegal command");					
+					}
 				} 
 				else if(cmd == 'a') { 
 					String play = game_strat.get(1).getNextPlay(player.getNHands(), player.hands.get(i), dealer.hand, player.getBet());
-					System.out.println("Basic\t\t" + getFullAdvice(play));
+					if (printFlag)
+						System.out.println("Basic\t\t" + getFullAdvice(play));
 					play = game_strat.get(0).getNextPlay(player.getNHands(), player.hands.get(i), dealer.hand, player.getBet());
-					System.out.println("HiLo\t\t" + getFullAdvice(play));
-				} else if(cmd == 't') { 
-					printStatsState();
+					if (printFlag)
+						System.out.println("HiLo\t\t" + getFullAdvice(play));
+				} else if(cmd == 't') {
+					if (printFlag)
+						printStatsState();
 				} else if(cmd == '$') {
-					System.out.println("Player's current balance is " + player.getBalance());
+					if (printFlag)
+						System.out.println("Player's current balance is " + player.getBalance());
 				} else if(cmd == 'q') {
-					System.out.println("bye");
+					if (printFlag)
+						System.out.println("bye");
 					System.exit(0);
-				} else
-					System.out.println(line + ": illegal command");					
-		
+				} else {
+					if (printFlag)
+						System.out.println(line + ": illegal command");					
+				}
 				if(player.isHittingHand(i)) {
-					if(!player.isDoubleDHand(i)) System.out.println("player hits");
+					if(!player.isDoubleDHand(i)) {
+						if (printFlag)
+							System.out.println("player hits");
+					}
 					Card c = dealer.dealCards();
 					for (int j = 0; j < bet_strat.size(); j++)
 						bet_strat.get(j).updateCount(c);
 					if(game_strat.get(0) instanceof HiLo)
 						((HiLo) game_strat.get(0)).updateCounts(c);
 					player.addCard(i, c);
-					player.printPlayersHand(print_index);
+					if (printFlag)
+						player.printPlayersHand(print_index);
 					player.hands.get(i).setHitting(false);
 					if(player.hands.get(i).isBust()) {
-						System.out.println("player busts" + hand_index);
+						if (printFlag)
+							System.out.println("player busts" + hand_index);
 						break;
 					}
 					if(player.isDoubleDHand(i)) {
@@ -397,14 +467,17 @@ public class Game {
 						break;					
 					}
 				} else if(player.isStandingHand(i)) {
-					System.out.println("player stands" + hand_index);
+					if (printFlag)
+						System.out.println("player stands" + hand_index);
 					break;
 				} else if(player.isSurrendingHand(i)) {
-					System.out.println("player is surrendering" + hand_index);
+					if (printFlag)
+						System.out.println("player is surrendering" + hand_index);
 					break;
 				} else if(player.isSplitting()) {
 					pStats.incHandsPlayed();
-					System.out.println("player is splitting");
+					if (printFlag)
+						System.out.println("player is splitting");
 					player.split(i);
 					Card c = dealer.dealCards();
 					for (int j = 0; j < bet_strat.size(); j++)
@@ -430,10 +503,12 @@ public class Game {
 			((HiLo) game_strat.get(0)).updateCounts(dealer.hand.getFirst());
 		
 		while(true) {
+			if (printFlag)
 			dealer.printDealersHand();
 			int dHandValue = dealer.hand.getValue();
 			if(dHandValue > 21) {
-				System.out.println("dealer busts");
+				if (printFlag)
+					System.out.println("dealer busts");
 				break;
 			}
 			if(dHandValue < 17 && !noHandsLeft) {
@@ -443,10 +518,12 @@ public class Game {
 				if(game_strat.get(0) instanceof HiLo)
 					((HiLo) game_strat.get(0)).updateCounts(c);
 				dealer.addCard(c);
-				System.out.println("dealer hits");
+				if (printFlag)
+					System.out.println("dealer hits");
 			} else {
 				dealer.hand.setIsStanding(true);
-				System.out.println("dealer stands");
+				if (printFlag)
+					System.out.println("dealer stands");
 				break;
 			}
 		}
@@ -456,8 +533,10 @@ public class Game {
 		
 		dealState();
 		
-		dealer.printDealersHand();
-		player.printPlayersHand(-1);
+		if (printFlag) {
+			dealer.printDealersHand();
+			player.printPlayersHand(-1);
+		}
 		
 		playersTurn();
 		
@@ -471,13 +550,16 @@ public class Game {
 
 		dealersTurn();
 		
-		if (dealer.hand.checkBlackjack())
-			System.out.println("blackjack!!");
+		if (dealer.hand.checkBlackjack()) {
+			if (printFlag)
+				System.out.println("blackjack!!");
+		}
 		else
 			for(int i = 0; i < player.getNHands(); ++i)
 				if (player.hands.get(i).checkBlackjack()) {
-					System.out.println("blackjack!!");
-					break;
+					if (printFlag)
+						System.out.println("blackjack!!");
+						break;
 				}
 		
 		resultsState();
@@ -494,7 +576,8 @@ public class Game {
 			int bet =  player.hands.get(i).getBet();
 			String res_str = new String();
 			if(player.isInsuring() && dealer.hand.checkBlackjack()) {
-				System.out.println("Player wins insurance");
+				if (printFlag)
+					System.out.println("Player wins insurance");
 				player.updateBalance(2*bet);
 			}
 			if(player.hands.get(i).isSurrender()) {
@@ -526,10 +609,11 @@ public class Game {
 			String hand_index = "";
 			if(player.getNHands() > 1)
 				hand_index = " [" + (i+1) + "]";
-			
-			System.out.println("Player " + res_str + hand_index + " and his current balance is " + player.getBalance());
+			if (printFlag)
+				System.out.println("Player " + res_str + hand_index + " and his current balance is " + player.getBalance());
 		}
-		System.out.println();
+		if (printFlag)
+			System.out.println();
 	}
 	
 	/** Calculates the results

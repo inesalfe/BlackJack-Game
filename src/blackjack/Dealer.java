@@ -1,6 +1,7 @@
 package blackjack;
 
 /** Class that implements a blackjack Dealer.
+ * 	<p> The dealer is also responsible for creating the game shoe. 
  * 
  * @author Ricardo Santos 90178
  * @author Tomás Bessa 90200

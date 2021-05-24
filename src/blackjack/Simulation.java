@@ -58,7 +58,6 @@ public class Simulation implements GameMode {
 			 cmd = "q";
 		else
 			cmd = play_strat.getNextPlay(nHands, p_hand, d_hand, bet);
-		System.out.println("# " + cmd);
 		return cmd;
 	}
 
@@ -70,11 +69,11 @@ public class Simulation implements GameMode {
 	@Override
 	public String getBetCommand() {
 		String cmd;
-		if(currSNumber > sNumber)
-			 cmd = "q";
+		if(currSNumber > sNumber) {
+			cmd = "q";
+		}
 		else
 			cmd = "b " + bet_strat.getNextBet();
-		System.out.println("# " + cmd);
 		return cmd;
 	}
 	
