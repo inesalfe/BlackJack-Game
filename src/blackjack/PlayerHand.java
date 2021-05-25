@@ -100,9 +100,7 @@ public class PlayerHand extends Hand {
 	}
 	
 	/** Checks if a double down was made.
-	 * 
-	 * @return isDoubleD Double down.
-	 * 
+	 *
 	*/
 	public void setIsDoubleD() {
 		isDoubleD = true;
@@ -119,7 +117,7 @@ public class PlayerHand extends Hand {
 	
 	/** Sets the bet the player wants to make.
 	 * 
-	 * @return isDoubleD Double down.
+	 * @param bet_in bet value to be set.
 	 * 
 	*/
 	public void setBet(int bet_in) {
@@ -168,7 +166,7 @@ public class PlayerHand extends Hand {
 	
 	/** Sets the hitting state
 	 * 
-	 * @return isHitting Flag which indicates if an hit is being made.
+	 * @param isHitting Flag which indicates if an hit is being made.
 	 * 
 	*/
 	public void setHitting(boolean isHitting) {

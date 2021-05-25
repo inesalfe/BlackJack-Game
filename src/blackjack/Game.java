@@ -153,13 +153,13 @@ public class Game {
 	 * can still be issued. 
 	 */
 	public Game(char Mode_in, int minBet_in, int maxBet_in, int balance_in, String shoeFile_in, String cmdFile_in) {
-		printFlag = true;
+		printFlag = true; // Commands should be printed
 		mode = new Debug(cmdFile_in);
 		
 		minBet = minBet_in;
 		maxBet = maxBet_in;
 	
-		shuffling = false;
+		shuffling = false; // Shuffle is initialized to false and will always be false
 
 		player = new Player(minBet, balance_in);
 		dealer = new Dealer(shoeFile_in);
@@ -167,18 +167,21 @@ public class Game {
 		dStats = new Stats();
 		pStats = new PlayerStats(balance_in);
 		
+		// Get approximated number of decks from the shoe file read
 		nDecks = dealer.shoe.getNDecks();
-				
+		/* Both playing and betting strategies */
 		game_strat = new ArrayList<PlayerStrategy>();
 		game_strat.add(new HiLo(maxBet_in, 9, 11, nDecks));
 		game_strat.add(new Basic(maxBet_in, 9, 11));
 		bet_strat = new ArrayList<BettingStrategy>();
 		bet_strat.add(new StandardStrategy(minBet, maxBet));
 		bet_strat.add(new Ace5(minBet, maxBet));
-
 	}
 	
-	
+	/** Receives a play command and puts it into a advice-friendly format, to be printed
+	 * @param cmd advised command in short form
+	 * @return advised command with the command name
+	 */
 	private String getFullAdvice(String cmd) {
 		if (cmd.equals("s"))
 			return "stand";
@@ -196,6 +199,11 @@ public class Game {
 			return "Invalid option";
 	}
 	
+	/**
+	 * Shuffles the shoe and resets the adequate counting strategies' counters;
+	 * If the game is in simulation mode, increment the counter of the number of shuffles
+	 * (since this is its stopping criterion)
+	 */
 	private void shuffleState() {
 		if ((mode instanceof Simulation))
 			((Simulation) mode).incCurrSNumber();
@@ -208,6 +216,13 @@ public class Game {
 		dealer.shuffle();
 	}
 	
+	/**
+	 * A bet is placed, if its value is valid, that is, if it is between min_bet and max_bet.
+	 * If not, prints an error message.
+	 * <p> If the bet is successfully placed, sets the new bet in the used betting strategies.
+	 * @param bet betting value
+	 * @return true if betting was successful (a valid bet was issued), false otherwise.
+	 */
 	private boolean bettingState(int bet) {
 		if (bet < minBet || bet > maxBet) {
 			if (printFlag)
@@ -222,6 +237,9 @@ public class Game {
 		return true;
 	}
 	
+	/**
+	 * Prints the statistics information in the console, for both the player and the dealer, formated with 2 decimal places.
+	 */
 	private void printStatsState() {
 		DecimalFormat df = new DecimalFormat("#.##");
 		System.out.println("BJ P/D \t" + df.format(pStats.getBJavg())+ " / " + df.format(dStats.getBJavg()));
@@ -232,6 +250,16 @@ public class Game {
 				df.format(((PlayerStats) pStats).percentageOfGain(player.getBalance())));
 	}
 	
+	
+	/**
+	 * Play State: first method called when starting a new blackjack game and at the beginning
+	 * of a new round. Resets the dealer's and player's hands and checks if a shuffle is needed (if so, calls
+	 * the shuffleState()). Reads a command from any source (depending on the game mode), and waits
+	 * for a bet to be placed. When this happens, calls the bettingState, and if the bet is successfully placed 
+	 * waits for a deal ("d") command to be issued so that it calls the playRound state (unless the game is in 
+	 * Simulation mode, there, goes directly to the playRound state).
+	 * <p> Also allows commands for printing statistics, player balance, betting advice and quiting the game.
+	 */
 	public void play() {
 				
 		while(true) {
@@ -304,6 +332,10 @@ public class Game {
 		}
 	}
 		
+	/**
+	 * The dealer deals cards to himself (firstly, and with one hole card), and then to the player.
+	 * All the betting and playing strategies are updated, as well as the statistics information
+	 */
 	private void dealState() {
 		for(int i = 0; i < 2; ++i) {
 			Card c = dealer.dealCards();
@@ -327,6 +359,12 @@ public class Game {
 		pStats.incHandsPlayed();
 	}
 	
+	/**
+	 * A player's turn: the player plays all his hands until he stands, surrenders or busts in all his hands
+	 * (up to a maximum of four).
+	 * <p> The playing commands are obtained depending on the game mode. Throughout the player's turn, 
+	 * all the counts related to betting and playing strategies, as well as to the statistics, are updated.
+	 */
 	private void playersTurn() {
 		
 		String line;
@@ -336,7 +374,9 @@ public class Game {
 		for(int i = 0; i < player.getNHands(); ++i) {
 			print_index = -1;
 			hand_index = "";
+			// If there was a split before and the current hand only has one card
 			if(player.hands.get(i).isSplit() && player.hands.get(i).getNCards() == 1) {
+				// get a new card and update all the game information
 				Card c = dealer.dealCards();
 				for (int j = 0; j < bet_strat.size(); j++)
 					bet_strat.get(j).updateCount(c);
@@ -363,18 +403,23 @@ public class Game {
 					player.printPlayersHand(print_index);
 				}
 			}
-			
+			/* if the player already stood (or was forced to do so, for example, after splitting a pair of 
+			* and receiving a card different than an Ace in any of those hands) */
 			if(player.isStandingHand(i)) {
 				continue;
 			}
 			
+			/* Gets the play from any of the available sources, depending on the game mode */
 			while(true) {
-				if(mode instanceof Simulation)
+				if(mode instanceof Simulation) 
+					// get command from a playing strategy
 					line = mode.getPlayCommand(player.getNHands(), player.hands.get(i), dealer.hand, player.getBet());
 				else
-					line = mode.getPlayCommand(); // get command from console or file
-				if(line.isBlank()) continue;
+					// get command from console or file
+					line = mode.getPlayCommand(); 
+				if(line.isBlank()) continue; // Blank line return, invalid command was detected
 				char cmd = line.charAt(0);
+				// sets some state variables according to the play
 				if(cmd == 'h') {
 					if ((player.hands.get(i).isSplit() && (player.hands.get(i).getNCards() == 2) && (player.hands.get(i).getFirst().getValue().equals("A")))) {
 						if (printFlag)
@@ -443,7 +488,10 @@ public class Game {
 					if (printFlag)
 						System.out.println(line + ": illegal command");					
 				}
+				
+				// Uses the previously set state variables to actually perform the corresponding play
 				if(player.isHittingHand(i)) {
+					// gets a card and updates all the game information
 					if(!player.isDoubleDHand(i)) {
 						if (printFlag)
 							System.out.println("player hits");
@@ -457,24 +505,30 @@ public class Game {
 					if (printFlag)
 						player.printPlayersHand(print_index);
 					player.hands.get(i).setHitting(false);
+					// If a player busts, set its state and go to the next hand (if there is one)
 					if(player.hands.get(i).isBust()) {
 						if (printFlag)
 							System.out.println("player busts" + hand_index);
 						break;
 					}
+					// If the player doubled down, he is forced to stand afterwards (could only take one more card)
 					if(player.isDoubleDHand(i)) {
 						player.stand(i);
 						break;					
 					}
-				} else if(player.isStandingHand(i)) {
+				} // Player stands this hand; set the state and go to the next one (if there's one)
+				else if(player.isStandingHand(i)) {
 					if (printFlag)
 						System.out.println("player stands" + hand_index);
 					break;
-				} else if(player.isSurrendingHand(i)) {
+				} // Player surrenders this hand; set the state and go to the next one (if there's one)
+				else if(player.isSurrendingHand(i)) {
 					if (printFlag)
 						System.out.println("player is surrendering" + hand_index);
 					break;
-				} else if(player.isSplitting()) {
+				} /* Player splits: performs the split action, adds a card to the first of the splitted hands
+				 and updates the information accordingly. Allows the player to play on this hand */
+				else if(player.isSplitting()) {
 					pStats.incHandsPlayed();
 					if (printFlag)
 						System.out.println("player is splitting");
@@ -485,6 +539,7 @@ public class Game {
 					if(game_strat.get(0) instanceof HiLo)
 						((HiLo) game_strat.get(0)).updateCounts(c);	
 					player.addCard(i, c);
+					// If the player splitted a pair of aces and the next card is not an ace, the player can no longer hit
 					if(player.hands.get(i).getFirst().getValue().equals("A") && !(c.getValue().equals("A")))
 						player.stand(i);
 					i--;
@@ -494,6 +549,12 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * The dealer's turn: Starts by turning up his hole card. Hits until an hand value of 
+	 * at least 17 is attained, then stands; if all the player's hands have busted or surrender, then the dealer
+	 * stands immediately after revealing his hole card, since he already won this round.
+	 * <p> For every card added (hit), game information is updated. 
+	 */
 	private void dealersTurn() {
 
 		dealer.setVisible();
@@ -529,6 +590,14 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * Called by the play state when a deal command is issued, so a new round starts.
+	 * <p> Starts by calling the dealState, printing both the dealer and player hands (if
+	 * prints are allowed). Afterwards, calls the playersTurn state. Computes if there are any player's
+	 * hands still in game and then calls the dealersTurn state. Lastly, checks if there is the need 
+	 * to print any blackjack information and computes the round results, by calling the resultsState, 
+	 * updating the game information accordingly. 
+	 */
 	public void playRound() {
 		
 		dealState();
@@ -566,6 +635,13 @@ public class Game {
 		
 	}
 	
+	/**
+	 * For each player hand, checks the round result, updates the player's balance accordingly,
+	 * prints the right information (if prints are allowed) and updates all the game information (
+	 * betting strategies counts and bet values and statistics values).
+	 * <p>
+	 * Calls an auxiliary function that helps to determine the round's result.
+	 */
 	private void resultsState() {
 
 		if (dealer.hand.checkBlackjack()) dStats.incBlackjacks();
@@ -618,11 +694,11 @@ public class Game {
 	
 	/** Calculates the results
 	 * 
-	 * @param i Flag relative to result
-	 * @return 1 - player wins, 0 - player pushes, -1 - player loses
+	 * @param i player hand in which the result is being computed
+	 * @return result: 1 - player wins, 0 - player pushes, -1 - player loses
 	 * 
 	 */
-	private int result(int i) { // 1 - player wins, 0 - player pushes, -1 - player loses
+	private int result(int i) {
 		if(player.hands.get(i).isBust()) return -1;
 		if(dealer.hand.isBust()) return 1;
 		if (player.hands.get(i).checkBlackjack())

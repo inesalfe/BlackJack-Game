@@ -95,7 +95,7 @@ public class Basic extends PlayerStrategy {
 	/** Calculates the action when the hand is soft
 	 * 
 	 * @param p_hand_value Total value assigned to the player's hand
-	 * @param d_card Represents a dealer's card
+	 * @param d_card_value Represents a dealer's card
 	 * @param bet Represents the bet
 	 * @return best course of action according the Basic Strategy 
 	 */
@@ -127,8 +127,8 @@ public class Basic extends PlayerStrategy {
 
 	/** Calculates the action when the hand is a pair
 	 * 
-	 * @param p_hand_value Total value assigned to the player's hand
-	 * @param d_card Represents a dealer's card
+	 * @param p_hand player's hand
+	 * @param card Represents a dealer's card
 	 * @param bet Represents the bet
 	 * @return best course of action according the Basic Strategy 
 	 */
