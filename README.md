@@ -1,2 +1,2 @@
 # BlackJack-Game
-Final project for the Objected Oriented Programming course.
+Final project for the Object Oriented Programming course.
