@@ -16,3 +16,4 @@ This simulator also allows for the user to get advice according to the following
 
 The following was delevoped and used for the code development:
 
+![UML](https://user-images.githubusercontent.com/31959975/221369880-c9c23a8b-b7e7-4c95-bc4d-98fb52ee2288.jpg)
